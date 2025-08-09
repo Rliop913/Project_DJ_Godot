@@ -1,5 +1,5 @@
 * text=auto eol=lf
-
 /**        export-ignore
 /addons    !export-ignore
 /addons/** !export-ignore
+addons/** filter=lfs diff=lfs merge=lfs -text
