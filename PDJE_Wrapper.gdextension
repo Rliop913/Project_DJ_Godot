@@ -1,0 +1,13 @@
+[configuration]
+
+entry_symbol = "pdje_wrapper_init"
+compatibility_minimum = "4.4"
+reloadable = true
+
+[libraries]
+linux.debug.x86_64 = "res://addons/Project_DJ_Godot/prebuilts/linux/Debug.so"
+linux.release.x86_64 = "res://addons/Project_DJ_Godot/prebuilts/linux/Release.so"
+windows.debug.x86_32 = "res://addons/Project_DJ_Godot/prebuilts/win/Debug.dll"
+windows.release.x86_32 = "res://addons/Project_DJ_Godot/prebuilts/win/Release.dll"
+windows.debug.x86_64 = "res://addons/Project_DJ_Godot/prebuilts/win/Debug.dll"
+windows.release.x86_64 = "res://addons/Project_DJ_Godot/prebuilts/win/Release.dll"
