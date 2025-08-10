@@ -11,7 +11,7 @@ This repository receives and stores prebuilt artifacts from [PDJE_Godot_Plugin](
 
 - 🧱 **Core Library**: [Project_DJ_Engine](https://github.com/Rliop913/Project_DJ_Engine)
 
-- 📚 **Documentation**: [PDJE DOCS](rliop913.github.io/Project_DJ_Engine/)
+- 📚 **Documentation**: [PDJE DOCS](https://rliop913.github.io/Project_DJ_Engine)
 
 ---
 
