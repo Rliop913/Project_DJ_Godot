@@ -2,7 +2,8 @@
 
 ---
 
-**notification: lfs is stuck in traffic throttling. The domain will soon be changed from ngrok to cloudflare, and the update will be applied within 24 hours of notification.**
+**notification: ~~lfs is stuck in traffic throttling. The domain will soon be changed from ngrok to cloudflare, and the update will be applied within 24 hours of notification.~~ **
+**LFS FIXED**
 
 ---
 
