@@ -1,5 +1,12 @@
 # Project_DJ_Godot
 
+---
+
+**notification: lfs is stuck in traffic throttling. The domain will soon be changed from ngrok to cloudflare, and the update will be applied within 24 hours of notification.**
+
+---
+
+
 📦 **CI/CD Prebuilt Repository**  
 This repository receives and stores prebuilt artifacts from [PDJE_Godot_Plugin](https://github.com/Rliop913/PDJE_Godot_Plugin) via automated GitHub Actions.
 
