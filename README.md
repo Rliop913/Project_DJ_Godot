@@ -2,8 +2,8 @@
 
 ---
 
-**notification: Currently, authentication is required to download lfs files due to a mistake in gitea settings. We plan to resolve the issue within 24 hours from the time of notification.**
-
+**notification**: ~Currently, authentication is required to download lfs files due to a mistake in gitea settings. We plan to resolve the issue within 24 hours from the time of notification.~
+**FIXED**
 
 ---
 
