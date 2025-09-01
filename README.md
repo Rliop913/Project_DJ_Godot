@@ -9,17 +9,17 @@
 
 
 📦 **CI/CD Prebuilt Repository**  
-This repository receives and stores prebuilt artifacts from [PDJE_Godot_Plugin](https://github.com/Rliop913/PDJE_Godot_Plugin) via automated GitHub Actions.
+This repository receives and stores prebuilt artifacts from [PDJE_Godot_Plugin](https://github.com/Rliop913/PDJE-Godot-Plugin) via automated GitHub Actions.
 
 ---
 
 
 ## 🔗 Related Projects
-- 🪄 **Godot Wrapper**: [PDJE_Godot_Plugin](https://github.com/Rliop913/PDJE_Godot_Plugin)
+- 🪄 **Godot Wrapper**: [PDJE_Godot_Plugin](https://github.com/Rliop913/PDJE-Godot-Plugin)
 
-- 🧱 **Core Library**: [Project_DJ_Engine](https://github.com/Rliop913/Project_DJ_Engine)
+- 🧱 **Core Library**: [Project_DJ_Engine](https://github.com/Rliop913/Project-DJ-Engine)
 
-- 📚 **Documentation**: [PDJE DOCS](https://rliop913.github.io/Project_DJ_Engine)
+- 📚 **Documentation**: [PDJE DOCS](https://rliop913.github.io/Project-DJ-Engine)
 
 ---
 
