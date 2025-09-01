@@ -2,8 +2,8 @@
 
 ---
 
-**notification: ~~lfs is stuck in traffic throttling. The domain will soon be changed from ngrok to cloudflare, and the update will be applied within 24 hours of notification.~~ **
-**LFS FIXED**
+**notification: Currently, authentication is required to download lfs files due to a mistake in gitea settings. We plan to resolve the issue within 24 hours from the time of notification.**
+
 
 ---
 
