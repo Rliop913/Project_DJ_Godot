@@ -45,13 +45,14 @@ if errorlevel 1 (
 pushd Project_DJ_Godot
 "%GIT_EXE%" lfs pull
 
-REM ===== 6) Prebuilts copy  =====
-if not exist "..\addons\Prebuilts" mkdir "..\addons\Prebuilts"
-robocopy "addons\Prebuilts" "..\addons\Prebuilts" /E >nul
+REM ===== 6) Project_DJ_Godot copy  =====
+if not exist "..\addons\Project_DJ_Godot" mkdir "..\addons\Project_DJ_Godot"
+robocopy "addons\Project_DJ_Godot" "..\addons\Project_DJ_Godot" /E >nul
 
 REM ===== 7) version files copy =====
 if exist PDJE_VERSION copy /Y "PDJE_VERSION" "..\"
 if exist PDJE_WRAPPER_VERSION copy /Y "PDJE_WRAPPER_VERSION" "..\"
+if exist Message_From_Project_DJ_Godot_Dev.md copy /Y "Message_From_Project_DJ_Godot_Dev.md" "..\"
 
 popd
 echo installed! cleaning cloned repo now.
@@ -63,6 +64,7 @@ if exist "PDJE_VERSION" set /p PDJE_VERSION=<PDJE_VERSION
 
 set "PDJE_WRAPPER_VERSION="
 if exist "PDJE_WRAPPER_VERSION" set /p PDJE_WRAPPER_VERSION=<PDJE_WRAPPER_VERSION
+
 
 echo PDJE Update Complete. PDJE_VERSION:%PDJE_VERSION%, PDJE_WRAPPER_VERSION:%PDJE_WRAPPER_VERSION%
 endlocal

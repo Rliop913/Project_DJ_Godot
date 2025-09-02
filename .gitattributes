@@ -1,8 +1,12 @@
 * text=auto eol=lf
 /**        export-ignore
-/PDJE_Wrapper.gdextension -export-ignore
 /Update_Project_DJ_Godot.sh -export-ignore
 /Update_Project_DJ_Godot.bat -export-ignore
+/Message_From_Project_DJ_Godot_Dev.md -export-ignore
 /addons    !export-ignore
 /addons/** !export-ignore
 addons/** filter=lfs diff=lfs merge=lfs -text
+addons/Project_DJ_Godot/linux/debug/libhwy.so filter=lfs diff=lfs merge=lfs -text
+addons/Project_DJ_Godot/linux/debug/libhwy.so.1 filter=lfs diff=lfs merge=lfs -text
+addons/Project_DJ_Godot/linux/debug/libhwy.so.1.2.0 filter=lfs diff=lfs merge=lfs -text
+addons/Project_DJ_Godot/linux/debug/libPDJE.so filter=lfs diff=lfs merge=lfs -text

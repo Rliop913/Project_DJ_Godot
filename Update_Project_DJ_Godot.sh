@@ -50,11 +50,13 @@ git clone --depth=1 https://github.com/Rliop913/Project_DJ_Godot.git
 cd Project_DJ_Godot
 git lfs pull
 
-mkdir -p ../addons/Prebuilts
-cp -r addons/Prebuilts/. ../addons/Prebuilts
+mkdir -p ../addons/Project_DJ_Godot
+cp -r addons/Project_DJ_Godot/. ../addons/Project_DJ_Godot
 
 [ -f PDJE_VERSION ] && cp PDJE_VERSION ../
 [ -f PDJE_WRAPPER_VERSION ] && cp PDJE_WRAPPER_VERSION ../
+[ -f Message_From_Project_DJ_Godot_Dev.md ] && cp Message_From_Project_DJ_Godot_Dev.md ../
+
 cd ..
 echo "installed! cleaning cloned repo now."
 sudo rm -r Project_DJ_Godot
