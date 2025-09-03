@@ -82,7 +82,7 @@ while IFS= read -r -d '' f; do
   (
     cd "$dir" || { echo "Failed to cd into: $dir" >&2; exit 1; }
     echo "Extracting: $bn"
-    if 7z x "$bn" -aoa >/dev/null; then
+    if 7z e "$bn" -aoa >/dev/null; then
       echo "Extracted: $bn"
       
       rm -f -- "$bn"
@@ -94,6 +94,7 @@ while IFS= read -r -d '' f; do
   )
 done < <(find . -type f -name '*.7z.001' -print0)
 
+rm -rf ../addons/Project_DJ_Godot
 mkdir -p ../addons/Project_DJ_Godot
 cp -r addons/Project_DJ_Godot/. ../addons/Project_DJ_Godot
 
