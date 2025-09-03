@@ -1,5 +1,5 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 
 REM ===== 1) Git install check =====
 where git >nul 2>&1
@@ -22,13 +22,46 @@ if errorlevel 1 (
 )
 
 REM ===== 3) 7zip install check =====
-where 7z.exe >nul 2>&1
-if errorlevel 1 (
+set "SEVENZIP="
+
+REM find path
+where 7z >nul 2>&1 && set "SEVENZIP=7z"
+
+
+if not defined SEVENZIP for %%P in (
+  "%ProgramFiles%\7-Zip\7z.exe"
+  "%ProgramFiles(x86)%\7-Zip\7z.exe"
+  "%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
+) do if exist "%%~fP" set "SEVENZIP=%%~fP"
+
+REM install
+if not defined SEVENZIP (
   echo 7-Zip not found. installing 7-Zip...
-  where winget >nul 2>&1 && (winget install -e --id 7zip.7zip --source winget --accept-package-agreements --accept-source-agreements) ^
-  || ( where choco >nul 2>&1 && (choco install 7zip -y) ) ^
-  || ( where scoop >nul 2>&1 && (scoop install 7zip) ) ^
-  || ( echo No supported package manager found. Please install 7-Zip manually. & exit /b 1 )
+  set "PM="
+  where winget >nul 2>&1 && set "PM=winget"
+  if not defined PM where choco >nul 2>&1 && set "PM=choco"
+  if not defined PM where scoop >nul 2>&1 && set "PM=scoop"
+  if not defined PM (
+    echo No supported package manager found. Please install 7-Zip manually.
+    exit /b 1
+  )
+
+  if "%PM%"=="winget" winget install -e --id 7zip.7zip --accept-package-agreements --accept-source-agreements
+  if "%PM%"=="choco"  choco install 7zip -y
+  if "%PM%"=="scoop"  scoop install 7zip
+
+  REM research
+  where 7z >nul 2>&1 && set "SEVENZIP=7z"
+  if not defined SEVENZIP for %%P in (
+    "%ProgramFiles%\7-Zip\7z.exe"
+    "%ProgramFiles(x86)%\7-Zip\7z.exe"
+    "%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
+  ) do if exist "%%~fP" set "SEVENZIP=%%~fP"
+)
+
+if not defined SEVENZIP (
+  echo 7-Zip still not found. Aborting.
+  exit /b 1
 )
 
 REM ===== 4) fix git PATH issue =====
@@ -42,17 +75,17 @@ where git >nul 2>&1 || (
   exit /b 1
 )
 
-REM ===== 5) 7z PATH fix =====
-set "SEVENZIP=7z"
-where %SEVENZIP% >nul 2>&1 || (
-  if exist "%ProgramFiles%\7-Zip\7z.exe" set "SEVENZIP=%ProgramFiles%\7-Zip\7z.exe"
-  if exist "%ProgramFiles(x86)%\7-Zip\7z.exe" set "SEVENZIP=%ProgramFiles(x86)%\7-Zip\7z.exe"
-  if exist "%LOCALAPPDATA%\Programs\7-Zip\7z.exe" set "SEVENZIP=%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
-)
-"%SEVENZIP%" >nul 2>&1 || (
-  echo 7-Zip is installed but not available in this session. Please open a new terminal and run again.
-  exit /b 1
-)
+@REM REM ===== 5) 7z PATH fix =====
+@REM set "SEVENZIP=7z"
+@REM where %SEVENZIP% >nul 2>&1 || (
+@REM   if exist "%ProgramFiles%\7-Zip\7z.exe" set "SEVENZIP=%ProgramFiles%\7-Zip\7z.exe"
+@REM   if exist "%ProgramFiles(x86)%\7-Zip\7z.exe" set "SEVENZIP=%ProgramFiles(x86)%\7-Zip\7z.exe"
+@REM   if exist "%LOCALAPPDATA%\Programs\7-Zip\7z.exe" set "SEVENZIP=%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
+@REM )
+@REM "%SEVENZIP%" >nul 2>&1 || (
+@REM   echo 7-Zip is installed but not available in this session. Please open a new terminal and run again.
+@REM   exit /b 1
+@REM )
 
 REM ===== 6) Git LFS init =====
 "%GIT_EXE%" lfs install
@@ -63,6 +96,7 @@ if errorlevel 1 (
   echo git clone failed.
   exit /b 1
 )
+
 
 pushd Project_DJ_Godot
 "%GIT_EXE%" lfs pull
@@ -75,16 +109,16 @@ for /r %%F in (*.7z.001) do (
   REM move to directory
   pushd "%%~dpF"
 
-  echo Extracting: %%~nxF
-  "%SEVENZIP%" x "%%~nxF" -aoa >nul
+  echo Extracting: %%~nF
+  "%SEVENZIP%" e "%%~nxF" -aoa -o"." >nul
 
   if errorlevel 1 (
     echo Failed to extract: %%~nxF
   ) else (
     echo Extracted: %%~nxF
     REM remove .7z files:
-    REM del /f /q "%%~nxF"
-    REM del /f /q "%%~nF.7z.0*"
+    del /f /q "%%~nF.*"
+    del /f /q "%%~nF.???"
   )
 
   popd
@@ -93,7 +127,7 @@ popd
 
 REM ===== 9) Project_DJ_Godot copy  =====
 if not exist "..\addons\Project_DJ_Godot" mkdir "..\addons\Project_DJ_Godot"
-robocopy "addons\Project_DJ_Godot" "..\addons\Project_DJ_Godot" /E >nul
+robocopy "addons\Project_DJ_Godot" "..\addons\Project_DJ_Godot" /MIR >nul
 
 REM ===== 10) version files copy =====
 if exist PDJE_VERSION copy /Y "PDJE_VERSION" "..\"
