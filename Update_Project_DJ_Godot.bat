@@ -133,8 +133,6 @@ REM ===== 10) version files copy =====
 if exist PDJE_VERSION copy /Y "PDJE_VERSION" "..\"
 if exist PDJE_WRAPPER_VERSION copy /Y "PDJE_WRAPPER_VERSION" "..\"
 if exist Message_From_Project_DJ_Godot_Dev.md copy /Y "Message_From_Project_DJ_Godot_Dev.md" "..\"
-if exist Update_Project_DJ_Godot.bat copy /Y "Update_Project_DJ_Godot.bat" "..\"
-if exist Update_Project_DJ_Godot.sh copy /Y "Update_Project_DJ_Godot.sh" "..\"
 
 
 
@@ -153,3 +151,6 @@ if exist "PDJE_WRAPPER_VERSION" set /p PDJE_WRAPPER_VERSION=<PDJE_WRAPPER_VERSIO
 
 echo PDJE Update Complete. PDJE_VERSION:%PDJE_VERSION%, PDJE_WRAPPER_VERSION:%PDJE_WRAPPER_VERSION%
 endlocal
+
+if exist Update_Project_DJ_Godot.bat copy /Y "Update_Project_DJ_Godot.bat" "..\"
+if exist Update_Project_DJ_Godot.sh copy /Y "Update_Project_DJ_Godot.sh" "..\"

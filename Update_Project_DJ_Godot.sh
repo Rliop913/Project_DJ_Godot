@@ -101,8 +101,6 @@ cp -r addons/Project_DJ_Godot/. ../addons/Project_DJ_Godot
 [ -f PDJE_VERSION ] && cp PDJE_VERSION ../
 [ -f PDJE_WRAPPER_VERSION ] && cp PDJE_WRAPPER_VERSION ../
 [ -f Message_From_Project_DJ_Godot_Dev.md ] && cp Message_From_Project_DJ_Godot_Dev.md ../
-[ -f Update_Project_DJ_Godot.bat ] && cp Update_Project_DJ_Godot.bat ../
-[ -f Update_Project_DJ_Godot.sh ] && cp Update_Project_DJ_Godot.sh ../
 
 cd ..
 echo "installed! cleaning cloned repo now."
@@ -113,3 +111,6 @@ PDJE_VERSION=$(cat ./PDJE_VERSION)
 PDJE_WRAPPER_VERSION=$(cat ./PDJE_WRAPPER_VERSION)
 
 echo "PDJE Update Complete. PDJE_VERSION:${PDJE_VERSION}, PDJE_WRAPPER_VERSION:${PDJE_WRAPPER_VERSION}"
+
+[ -f Update_Project_DJ_Godot.bat ] && cp Update_Project_DJ_Godot.bat ../
+[ -f Update_Project_DJ_Godot.sh ] && cp Update_Project_DJ_Godot.sh ../
