@@ -1,9 +1,20 @@
 # Project_DJ_Godot
 
 ---
+**🔍 How To Use**
 
-**notification**: ~Currently, authentication is required to download lfs files due to a mistake in gitea settings. We plan to resolve the issue within 24 hours from the time of notification.~
-**FIXED**
+```bash
+git clone https://github.com/Rliop913/Project_DJ_Godot.git
+cd Project_DJ_Godot
+cp Update_Project_DJ_Godot.bat ~/path/to/your/project/root
+cp Update_Project_DJ_Godot.sh ~/path/to/your/project/root
+
+cd  ~/path/to/your/project/root
+
+bash ./Update_Project_DJ_Godot.sh
+
+
+```
 
 ---
 
