@@ -13,7 +13,7 @@ jobs:
     name: checker
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.PDJE_AUTO_PUSH }}
+      GH_TOKEN: ${{ secrets.CHECKER_TOKEN }}
     steps:
       - name: Pull & run updater
         run: |
