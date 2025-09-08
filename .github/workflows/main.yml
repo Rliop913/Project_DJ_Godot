@@ -32,8 +32,9 @@ jobs:
             exit 1
           fi
       - name: revert commit
-        if: failure()
+        if: success()
         run: |
           tree .
+          git log
           
         working-directory: Project_DJ_Godot
