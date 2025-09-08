@@ -32,9 +32,14 @@ jobs:
             exit 1
           fi
       - name: revert commit
-        if: success()
+        if: failure()
         run: |
           tree .
-          git log
+          
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin
+          git reset --hard HEAD~1
+          git push origin main --force
           
         working-directory: Project_DJ_Godot
