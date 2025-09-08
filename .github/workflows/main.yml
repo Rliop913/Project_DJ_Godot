@@ -1,0 +1,39 @@
+name: valid_checker
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  Valid_Check:
+    name: checker
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PDJE_AUTO_PUSH }}
+    steps:
+      - name: Pull & run updater
+        run: |
+          set -e
+          gh auth setup-git
+          gh repo clone Rliop913/Project_DJ_Godot
+          cd Project_DJ_Godot
+          git lfs install --local
+          set +e
+          git lfs pull
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          set -e
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "LFS pull failed"
+            exit 1
+          fi
+      - name: revert commit
+        if: failure()
+        run: |
+          tree .
+          
+        working-directory: Project_DJ_Godot
