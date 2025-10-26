@@ -1,6 +1,23 @@
 # Project_DJ_Godot
 
 ---
+📢 Development Notice – Raw Input System Update
+
+After extensive investigation, a conflict has been confirmed between the project’s custom Raw Input thread and Godot Engine’s internal DisplayServer Raw Input registration.
+The root cause was a “ping-pong” ownership issue, where both systems repeatedly attempted to register control over the same input devices.
+
+Although considerable time was spent exploring other potential causes, this discovery has clarified the problem.
+
+✅ Resolution Plan:
+The Raw Input handler will be migrated to a separate process, using IPC (Inter-Process Communication) for data exchange with the main application.
+This approach follows the same design philosophy used in Linux, ensuring input isolation and preventing ownership conflicts.
+
+Implementation of this new architecture will begin shortly.
+---
+
+
+
+---
 **🔍 How To Use**
 
 ```bash
