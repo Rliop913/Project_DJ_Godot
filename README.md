@@ -55,11 +55,29 @@ This repository receives and stores prebuilt artifacts from [PDJE_Godot_Plugin](
 
 ```mermaid
 flowchart TD
-Project_DJ_Engine --> PDJE_Godot_Plugin
-PDJE_Godot_Plugin --> Project_DJ_Godot
 
-origin_build_success --> Project_DJ_Engine
-manual_release --> PDJE_Godot_Plugin
+  subgraph CORE_DEVELOP
+    push_to_core --> core/dev
+    core/dev --> core/dev_build_test
+    core/dev_build_test --> core/main
+    core/main --> core/main_build_test
+  end
+
+  subgraph WRAPPER_DEVELOP
+    push_to_wrapper --> wrapper/dev
+    wrapper/dev --> wrapper/dev_build_test
+    core/dev --> wrapper/dev_build_test
+    wrapper/dev_build_test --> wrapper/main
+    wrapper/main --> wrapper/main_build_test
+    core/main --> wrapper/main_build_test
+  end
+CORE_DEVELOP --> Project_DJ_Engine
+WRAPPER_DEVELOP --> PDJE_Godot_Plugin
+Project_DJ_Engine -->|TRIG_CICD| PDJE_Godot_Plugin
+PDJE_Godot_Plugin -->|RELEASE| Project_DJ_Godot
+
 ```
+
+
 This is the CI/CD call graph for this project.
 These three repositories are chained into one continuous automation flow using GitHub Actions.
