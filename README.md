@@ -54,28 +54,36 @@ This repository receives and stores prebuilt artifacts from [PDJE_Godot_Plugin](
 ## 🔁 CI/CD Call Graph
 
 ```mermaid
+%%{init: {'flowchart': {'curve': 'stepAfter'}}}%%
 flowchart TD
 
   subgraph CORE_DEVELOP
-    push_to_core --> core/dev
+    push_to_core/dev --> core/dev
     core/dev --> core/dev_build_test
     core/dev_build_test --> core/main
     core/main --> core/main_build_test
   end
 
+  subgraph VALID_CHECK
+    RELEASE --> self_clone/git_lfs_test
+    self_clone/git_lfs_test --> PASS
+    self_clone/git_lfs_test --> FAIL
+    FAIL --> revert_commit
+  end
   subgraph WRAPPER_DEVELOP
-    push_to_wrapper --> wrapper/dev
+    push_to_wrapper/dev --> wrapper/dev
     wrapper/dev --> wrapper/dev_build_test
     core/dev --> wrapper/dev_build_test
     wrapper/dev_build_test --> wrapper/main
     wrapper/main --> wrapper/main_build_test
     core/main --> wrapper/main_build_test
   end
+
 CORE_DEVELOP --> Project_DJ_Engine
 WRAPPER_DEVELOP --> PDJE_Godot_Plugin
 Project_DJ_Engine -->|TRIG_CICD| PDJE_Godot_Plugin
 PDJE_Godot_Plugin -->|RELEASE| Project_DJ_Godot
-
+Project_DJ_Godot --> VALID_CHECK
 ```
 
 
