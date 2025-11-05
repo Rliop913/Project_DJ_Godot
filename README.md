@@ -1,18 +1,86 @@
 # Project_DJ_Godot
 
 ---
-📢 Development Notice – Raw Input System Update
 
-After extensive investigation, a conflict has been confirmed between the project’s custom Raw Input thread and Godot Engine’s internal DisplayServer Raw Input registration.
-The root cause was a “ping-pong” ownership issue, where both systems repeatedly attempted to register control over the same input devices.
+# 📢 PDJE Input Module — Update Notice (v0.6.X)
 
-Although considerable time was spent exploring other potential causes, this discovery has clarified the problem.
+## Abstract
 
-✅ Resolution Plan:
-The Raw Input handler will be migrated to a separate process, using IPC (Inter-Process Communication) for data exchange with the main application.
-This approach follows the same design philosophy used in Linux, ensuring input isolation and preventing ownership conflicts.
+The PDJE Input Module has been updated. This module is a **cross-platform, low-level input engine** provided by Project DJ Engine, delivering **best-in-class low latency** suitable for production deployments.
+Input data is wrapped through Godot Engine **Signals**, exposing **device GUID**, **user-defined device name**, and **input timestamp (microseconds, µs)** within each signal payload.
 
-Implementation of this new architecture will begin shortly.
+---
+
+## What Can We Do
+
+* **Multi-device identification & separation**: Designed to distinguish input sources so that the **same key code** from **different keyboards** is handled independently.
+* **High-resolution timestamps**: Uses OS-specific high-resolution timers to provide **µs-level** timestamps.
+* **Flexible mapping**:
+
+  * Example: Map **Keyboard A** to lane 1 and **Keyboard B** to lane 2.
+  * Example: Connect **multiple mouse** simultaneously and assign **separate cursors** to each.
+* **Godot Signal integration**: On each input event, a Signal is emitted with payload fields such as:
+
+  * `device_id` (device unique identifier)
+  * `device_name` (registered name)
+  * `t_us` (event timestamp, µs)
+  * `event_type`, `code`, `value` (implementation details)
+
+> *Note:* Actual signal names/fields may vary by project configuration. Refer to the module’s API docs.
+
+---
+
+## Architecture Overview (Collision-Avoidance Design)
+
+To avoid conflicts with Godot’s built-in input system, the Input Module spawns a **dedicated subprocess**.
+
+* Input buffers are shared via **IPC shared memory**, achieving **low overhead** and **stable latency**.
+* **Data path (Godot ⇄ subprocess):**
+
+  1. **Init phase:** exchange configuration over **localhost HTTP** (port, device list, etc.)
+  2. **Runtime phase:** deliver event stream via **IPC shared memory**
+
+---
+
+## Initialization (Configure) Phase
+
+* The Godot process scans for an **available port** and passes it as an **argument** when launching the subprocess.
+* The subprocess listens on that port to accept the **HTTP configure** request, then exchanges **IPC details** (handles/keys/sizes, etc.).
+
+### Port Preemption (Race Condition) Notice
+
+* Rarely, a third-party process might claim the same port **during** subprocess startup.
+* If that happens, the subprocess cannot bind and **exits immediately**.
+* While **theoretical and very unlikely**, please **open an issue** with logs and reproduction steps if you suspect this occurred.
+
+---
+
+## Current Support / Version
+
+* **PDJE Version:** `0.6.X`
+* **Supported OS:** **Windows** (current)
+* **Windows Backend:** **RawInput**
+* **Linux (planned):** `libevdev + epoll + RT scheduling`
+* **macOS (under review):** `IOKit (tentative)`
+
+---
+
+## Known Issues / Recommendations
+
+* **Port collisions:** Very rare during initialization; if repeated, report with logs.
+* **Security/AV tools:** Some environments may restrict RawInput or subprocess creation. Whitelisting/exceptions may be required.
+* **Timebase alignment:** For µs-level judgments, follow the documentation’s **timebase synchronization** strategy with your audio/judging engine.
+
+---
+
+## Feedback & Contributions
+
+Bug reports, performance logs (timestamp/latency distributions), and device compatibility feedback are welcome.
+When filing an issue, please include: **OS/version**, **PDJE version (0.6.X)**, **Godot version**, **device model**, **repro steps**, and **relevant logs**.
+
+> If you’d like, we can append **Changelog**, **performance metrics**, and **migration guidance** sections tailored to this release.
+
+
 ---
 
 
