@@ -49,6 +49,7 @@ jobs:
       - name: Run Test
         run: |
           touch project.godot
+          cd $GITHUB_WORKSPACE/Project_DJ_Godot
           "../$GODOT_NAME" --headless --path . --run "res://SmokeTests/SmokeTest_LoadPlugins.tscn"
             
       # - name: Pull & run updater
