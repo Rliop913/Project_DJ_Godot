@@ -39,7 +39,7 @@ jobs:
         run: |
           ls .
           rm -f ./*.zip || true
-          GODOT_NAME=$(ls | grep godot)
+          GODOT_NAME=$(ls | grep Godot)
            echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV" 
       - name: Set Project
         run: |
