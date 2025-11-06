@@ -26,7 +26,7 @@ jobs:
           # Download zipball from assets
           zipBall: false # optional, default is false
           # Relative path under $GITHUB_WORKSPACE to place the downloaded files
-          out-file-path: $GITHUB_WORKSPACE
+          out-file-path: .
           # If the downloaded assets should be extracted to `out-file-path`. Supports tar, tar.gz and zip
           extract: true # optional, default is false
           # Github token to access private repos
