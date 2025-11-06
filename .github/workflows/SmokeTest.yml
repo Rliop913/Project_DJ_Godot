@@ -48,6 +48,7 @@ jobs:
           bash Update_Project_DJ_Godot.sh
       - name: Run Test
         run: |
+          cd $GITHUB_WORKSPACE/Project_DJ_Godot
           cat > project.godot <<'GODOT'
           ; Engine configuration file.
           ; It's best edited using the editor UI and not directly,
@@ -63,7 +64,6 @@ jobs:
           
           config/features=PackedStringArray("4.4")
           GODOT
-          cd $GITHUB_WORKSPACE/Project_DJ_Godot
           chmod +x -- "../$GODOT_NAME"
           
           timeout 30s "../$GODOT_NAME" --headless --path . --run "res://SmokeTests/SmokeTest_LoadPlugins.tscn" -v 2>&1 | tee ./load_plugin.log
