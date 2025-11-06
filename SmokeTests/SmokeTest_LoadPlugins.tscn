@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://rdvatsji62t3"]
 
 [sub_resource type="GDScript" id="GDScript_4lj35"]
-script/source = "extends PDJE_Wrapper
+script/source = "extends Node
 
 
 func _ready() -> void:
