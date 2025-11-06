@@ -48,7 +48,21 @@ jobs:
           bash Update_Project_DJ_Godot.sh
       - name: Run Test
         run: |
-          touch project.godot
+          cat > project.godot <<'GODOT'
+          ; Engine configuration file.
+          ; It's best edited using the editor UI and not directly,
+          ; since the parameters that go here are not all obvious.
+          ;
+          ; Format:
+          ;   [section] ; section goes between []
+          ;   param=value ; assign values to parameters
+          
+          config_version=5
+          
+          [application]
+          
+          config/features=PackedStringArray("4.4")
+          GODOT
           cd $GITHUB_WORKSPACE/Project_DJ_Godot
           chmod +x -- "../$GODOT_NAME"
           "../$GODOT_NAME" --headless --path . --run "res://SmokeTests/SmokeTest_LoadPlugins.tscn" 2>&1 | tee ./load_plugin.log
