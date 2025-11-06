@@ -18,7 +18,7 @@ jobs:
           # The source repository path. Expected format {owner}/{repo}
           repository: godotengine/godot # optional, default is ${{ github.repository }}
           # A flag to choose between latest release and remaining releases
-          latest: 4.5.1-stable # optional, default is false
+          latest: true # optional, default is false
           # A flag to download from prerelease. It should be combined with latest flag
           fileName: Godot_v4.5.1-stable_linux.x86_64.zip
           # Download tarball from assets
