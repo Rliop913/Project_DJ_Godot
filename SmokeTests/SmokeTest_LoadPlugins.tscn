@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://rdvatsji62t3"]
+
+[sub_resource type="GDScript" id="GDScript_4lj35"]
+script/source = "extends PDJE_Wrapper
+
+
+func _ready() -> void:
+	var ok = true
+	print(\"SMOKE: started\")
+	if not ClassDB.class_exists(\"PDJE_Wrapper\"):
+		push_error(\"PDJE_Wrapper not registered\")
+		ok = false
+	if(ok):
+		get_tree().quit(0)
+	else:
+		get_tree().quit(1)
+"
+
+[node name="PDJE_Wrapper" type="PDJE_Wrapper"]
+script = SubResource("GDScript_4lj35")
