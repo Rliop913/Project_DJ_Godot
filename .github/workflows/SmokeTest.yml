@@ -35,10 +35,22 @@ jobs:
           
           # The release id to download the file from
           # releaseId: # optional, default is 
-      - name: Echo Downloaded
+      - name: Locate Downloaded
         run: |
           ls .
-          
+          rm -f ./*.zip || true
+          GODOT_NAME=$(ls | grep godot)
+           echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV" 
+      - name: Set Project
+        run: |
+          git -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false clone https://github.com/Rliop913/Project_DJ_Godot.git
+          cd Project_DJ_Godot
+          bash Update_Project_DJ_Godot.sh
+      - name: Run Test
+        run: |
+          touch project.godot
+          "../$GODOT_NAME" --headless --path . --run "res://SmokeTests/SmokeTest_LoadPlugins.tscn"
+            
       # - name: Pull & run updater
       #   run: |
       #     set -e
