@@ -80,7 +80,8 @@ jobs:
           rm ./*zip
           ls | grep "Godot"
           tree .
-          GODOT_NAME="testcrash"
+          GODOT_NAME=$(ls | grep "Godot")
+          GODOT_NAME=($GODOT_NAME + "Contents/MacOS/Godot")
           echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV" 
       - name: Set Project
         shell: bash
@@ -108,6 +109,7 @@ jobs:
           config/features=PackedStringArray("4.4")
           GODOT
           chmod +x "../$GODOT_NAME"
+          tree .
           # tree ./addons/Project_DJ_Godot/linux
           # ldd ./addons/Project_DJ_Godot/linux/debug/*.so grep 'not found' || true
           # ldd ./addons/Project_DJ_Godot/linux/release/*.so grep 'not found' || true
