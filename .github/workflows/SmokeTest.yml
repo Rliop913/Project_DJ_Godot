@@ -4,13 +4,29 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 jobs:
   SmokeTest:
-    name: checker
-    runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.CHECKER_TOKEN }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+
+      matrix:
+        include:
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            build_type: Release
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Release
+          - os: macOS-14
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Release
+
     steps:
       - name: release-downloader
         uses: robinraju/release-downloader@v1.12
@@ -66,38 +82,10 @@ jobs:
           config/features=PackedStringArray("4.4")
           GODOT
           chmod +x -- "../$GODOT_NAME"
-          tree ./addons/Project_DJ_Godot/linux
-          ldd ./addons/Project_DJ_Godot/linux/debug/*.so grep 'not found' || true
-          ldd ./addons/Project_DJ_Godot/linux/release/*.so grep 'not found' || true
+          # tree ./addons/Project_DJ_Godot/linux
+          # ldd ./addons/Project_DJ_Godot/linux/debug/*.so grep 'not found' || true
+          # ldd ./addons/Project_DJ_Godot/linux/release/*.so grep 'not found' || true
           "../$GODOT_NAME" --headless --path . --import --quit
           timeout 30s "../$GODOT_NAME" --headless --path . --run "res://SmokeTests/SmokeTest_LoadPlugins.tscn" 2>&1 | tee ./load_plugin.log
           cat ./load_plugin.log 
           
-      # - name: Pull & run updater
-      #   run: |
-      #     set -e
-      #     gh auth setup-git
-      #     gh repo clone Rliop913/Project_DJ_Godot
-      #     cd Project_DJ_Godot
-      #     git lfs install --local
-      #     set +e
-      #     git lfs pull
-      #     EXIT_CODE=$?
-      #     echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
-      #     set -e
-      #     if [ $EXIT_CODE -ne 0 ]; then
-      #       echo "LFS pull failed"
-      #       exit 1
-      #     fi
-      # - name: revert commit
-      #   if: failure()
-      #   run: |
-      #     tree .
-          
-      #     git config user.name  "github-actions[bot]"
-      #     git config user.email "github-actions[bot]@users.noreply.github.com"
-      #     git fetch origin
-      #     git reset --hard HEAD~1
-      #     git push origin main --force
-          
-      #   working-directory: Project_DJ_Godot
