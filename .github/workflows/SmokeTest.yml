@@ -28,30 +28,34 @@ jobs:
             build_type: Release
 
     steps:
-      - name: release-downloader
+      - name: release-downloader-macos
         uses: robinraju/release-downloader@v1.12
+        if: runner.os == 'macOS'
         with:
-          # The source repository path. Expected format {owner}/{repo}
-          repository: godotengine/godot # optional, default is ${{ github.repository }}
-          # A flag to choose between latest release and remaining releases
+          repository: godotengine/godot
           tag: 4.4.1-stable
-          latest: false # optional, default is false
-          # A flag to download from prerelease. It should be combined with latest flag
-          fileName: Godot_v4.4.1-stable_linux.x86_64.zip
-          # Download tarball from assets
-          tarBall: false # optional, default is false
-          # Download zipball from assets
-          zipBall: false # optional, default is false
-          # Relative path under $GITHUB_WORKSPACE to place the downloaded files
+          fileName: Godot_v4.4.1-stable_mono_macos.universal.zip
           out-file-path: .
-          # If the downloaded assets should be extracted to `out-file-path`. Supports tar, tar.gz and zip
-          extract: true # optional, default is false
-          # Github token to access private repos
+          extract: true
+      - name: release-downloader-Windows
+        uses: robinraju/release-downloader@v1.12
+        if: runner.os == 'Windows'
+        with:
+          repository: godotengine/godot
+          tag: 4.4.1-stable
+          fileName: Godot_v4.4.1-stable_win64.exe.zip
+          out-file-path: .
+          extract: true
+      - name: release-downloader-linux
+        uses: robinraju/release-downloader@v1.12
+        if: runner.os == 'Linux'
+        with:
+          repository: godotengine/godot
+          tag: 4.4.1-stable
+          fileName: Godot_v4.4.1-stable_linux.x86_64.zip
+          out-file-path: .
+          extract: true
           
-          # The URL of the Github API, only use this input if you are using Github Enterprise
-          
-          # The release id to download the file from
-          # releaseId: # optional, default is 
       - name: Locate Downloaded
         run: |
           ls .
