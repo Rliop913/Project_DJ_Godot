@@ -118,11 +118,7 @@ jobs:
           config/features=PackedStringArray("4.4")
           GODOT
           chmod +x "../$GODOT_NAME"
-          ls
-          # tree ./addons/Project_DJ_Godot/linux
-          # ldd ./addons/Project_DJ_Godot/linux/debug/*.so grep 'not found' || true
-          # ldd ./addons/Project_DJ_Godot/linux/release/*.so grep 'not found' || true
           "../$GODOT_NAME" --headless --path . --import --quit
-          timeout 30s "../$GODOT_NAME" --headless --path . --run "res://SmokeTests/SmokeTest_LoadPlugins.tscn" 2>&1 | tee ./load_plugin.log
-          cat ./load_plugin.log 
+          timeout 30s "../$GODOT_NAME" --headless --quiet --path . --run "res://SmokeTests/SmokeTest_LoadPlugins.tscn"
+          
           
