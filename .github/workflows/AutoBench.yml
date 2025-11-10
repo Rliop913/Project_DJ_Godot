@@ -123,7 +123,7 @@ jobs:
           
           cat QC_Result.txt
           mkdir QCRes
-          cp QC_Result.txt QCRes/
+          cp QC_Result.txt QCRes/QC_Result_${{ matrix.os}}.txt
       
       - name: Upload Bench Result
         if: success() 
