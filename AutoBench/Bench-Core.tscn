@@ -226,6 +226,7 @@ func _ready() -> void:
 	bench(\"deactive player\", func():
 		player.Deactivate()
 	)
+	get_tree().quit(0)
 "
 
 [node name="Node" type="Node"]

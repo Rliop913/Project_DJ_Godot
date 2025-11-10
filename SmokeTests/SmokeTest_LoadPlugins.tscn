@@ -6,7 +6,6 @@ script/source = "extends Node
 
 func _ready() -> void:
 	var ok = true
-	print(\"SMOKE: started\")
 	if not ClassDB.class_exists(\"PDJE_Wrapper\"):
 		push_error(\"PDJE_Wrapper not registered\")
 		ok = false
