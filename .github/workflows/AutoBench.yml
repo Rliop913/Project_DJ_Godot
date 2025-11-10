@@ -122,4 +122,10 @@ jobs:
           timeout 300s "../$GODOT_NAME" --headless --path . -v --run "res://AutoBench/Bench-Core.tscn"
           ls
           cat QC_Result.txt
-          
+      
+      - name: Upload build artifacts
+        if: failure() 
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed
+          path: ./    
