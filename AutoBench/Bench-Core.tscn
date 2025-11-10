@@ -1,0 +1,232 @@
+[gd_scene load_steps=2 format=3 uid="uid://y74rf2smbb0s"]
+
+[sub_resource type="GDScript" id="GDScript_4rfxv"]
+script/source = "extends Node
+var eg:PDJE_Wrapper
+var startTime:int
+var endTime:int
+var ed:EditorWrapper
+func gettime():
+	return Time.get_ticks_msec()
+
+func bench(func_name:String, work:Callable):
+	var fa := FileAccess.open(\"res://QC_Result.txt\", FileAccess.READ_WRITE)
+	if fa == null:
+		FileAccess.open(\"res://QC_Result.txt\", FileAccess.WRITE)
+		fa = FileAccess.open(\"res://QC_Result.txt\", FileAccess.READ_WRITE)
+	fa.seek(fa.get_length())
+	startTime = gettime()
+	work.call()
+	endTime = gettime() - startTime
+	
+	var text = \"[bench func=\" + func_name + \" elapsed: \" + str(endTime) + \" ms ]\"
+	fa.store_line(text)
+	fa.flush()
+	fa.close()
+	
+func _ready() -> void:
+	return
+	bench(\"init core engine object\", func():
+		eg = PDJE_Wrapper.new()
+		)
+	bench(\"init core engine\", func():
+		eg.InitEngine(\"res://AutoBench/TEMP_FOLDER/CORE/\")
+	)
+	bench(\"init editor\", func():
+		eg.InitEditor(\"dev\", \"void@void\", \"res://AutoBench/TEMP_FOLDER/SANDBOX/\")
+	)
+	bench(\"get editor\", func():
+		ed = eg.GetEditor()
+	)
+	
+	bench(\"config new music\",func():
+		ed.ConfigNewMusic(\"sample_sinewave\", \"composer\", \"res://sine_440.wav\", \"0\")
+	)
+	var edit_music_args:PDJE_EDITOR_ARG
+	bench(\"init music arg\", func():
+		edit_music_args = PDJE_EDITOR_ARG.new()
+	)
+	bench(\"write music arg\", func():
+		edit_music_args.InitMusicArg(\"sample_sinewave\", \"60\", 0,0,0)
+	)
+	bench(\"add music line\", func():
+		ed.AddLine(edit_music_args)
+	)
+	var edit_mix_args:PDJE_EDITOR_ARG
+	edit_mix_args = PDJE_EDITOR_ARG.new()
+	bench(\"write track arg\", func():
+		edit_mix_args.InitMixArg(PDJE_EDITOR_ARG.EDITOR_TYPE_LIST.LOAD, 0, 1, 
+		\"sample_sinewave\", \"composer\", \"60\", 
+		0, 0, 0,
+		0, 0, 0)
+	)
+	bench(\"add track line\", func():
+		ed.AddLine(edit_mix_args)
+	)
+	edit_mix_args.InitMixArg(PDJE_EDITOR_ARG.EDITOR_TYPE_LIST.BPM_CONTROL,
+	PDJE_EDITOR_ARG.EDITOR_DETAIL_LIST.TIME_STRETCH,
+	1,
+	\"60\",\"\",\"\",
+	0,0,0,
+	0,0,0)
+	ed.AddLine(edit_mix_args)
+	var edit_kv_args := PDJE_EDITOR_ARG.new()
+	edit_kv_args.InitKeyValueArg(\"temp\", \"data\")
+	ed.AddLine(edit_kv_args)
+	
+	bench(\"undo\", func():
+		ed.Undo(ed.KV, \"\")
+	)
+	
+	bench(\"redo\", func():
+		ed.Redo(ed.KV, \"\")
+	)
+	
+	bench(\"delete line\", func():
+		ed.deleteLine(edit_kv_args,false,false)
+	)
+	bench(\"update log graph\", func():
+		ed.UpdateLog(ed.KV,\"\")
+	)
+	var graph:String
+	bench(\"get log graph\", func():
+		graph = ed.GetLogWithJSONGraph(ed.kv, \"\")
+	)
+	var jobj := JSON.new()
+	var jsonparsed = jobj.parse_string(graph)
+	var targetName :String = jsonparsed[\"BRANCH\"][0][\"NAME\"] as String
+	var targetOID :String = jsonparsed[\"BRANCH\"][0][\"OID\"] as String
+	bench(\"go\", func():
+		ed.Go(ed.KV, targetName, targetOID)
+	)
+	
+	bench(\"get all line\", func():
+		ed.getAll()
+	)
+	
+	bench(\"render\", func():
+		ed.render(\"sample_track\")
+	)
+	
+	bench(\"make demo player\", func():
+		ed.demoPlayInit(48, \"sample_track\")
+	)
+	
+	bench(\"push only music to root db\", func():
+		ed.pushToRootDB(\"sample_sinewave\", \"composer\")
+	)
+	
+	bench(\"push track to root db\", func():
+		ed.pushTrackToRootDB(\"sample_track\")
+	)
+	
+	bench(\"destroy sandbox\", func():
+		ed.DESTROY_PROJECT()
+	)
+	bench(\"close editor\", func():
+		eg.CloseEditor()
+	)
+	
+	bench(\"Search Music\", func():
+		eg.SearchMusic(\"\", \"\", -1.0)
+	)
+	var track_data:Array
+	bench(\"Search Track\", func():
+		track_data = eg.SearchTrack(\"\")
+	)
+	bench(\"init player\", func():
+		eg.InitPlayer(PDJE_Wrapper.HYBRID_RENDER, track_data[0], 48)
+	)
+	
+	var player:PlayerWrapper
+	
+	bench(\"get player\", func():
+		player = eg.GetPlayer()
+	)
+	
+	bench(\"activate player\", func():
+		player.Activate()
+	)
+	var mixFX : FXWrapper
+	bench(\"get main fx\", func():
+		mixFX = player.GetFXControlPanel()
+	)
+	
+	bench(\"check fx on or off\", func():
+		mixFX.CheckFXOn()
+	)
+	bench(\"on / off fx\", func():
+		mixFX.FX_ON_OFF(EnumWrapper.PDJE_FX_LIST.FILTER, true)
+	)
+	var mixArgSetter:FXArgWrapper
+	bench(\"get main fx argsetter\", func():
+		mixArgSetter = mixFX.GetArgSetter()
+	)
+	bench(\"get main fx arg keys\", func():
+		mixArgSetter.GetFXArgKeys(EnumWrapper.PDJE_FX_LIST.FILTER)
+	)
+	bench(\"set main fx arg\", func():
+		mixArgSetter.SetFXArg(EnumWrapper.PDJE_FX_LIST.FILTER, \"HLswitch\", 0)
+	)
+	var musHDL : MusPanelWrapper
+	
+	bench(\"get main music control pannel\", func():
+		musHDL = player.GetMusicControlPanel()
+	)
+	bench(\"load music\", func():
+		musHDL.LoadMusic(\"sample_sinewave\", \"composer\", 60)
+	)
+	bench(\"set music\", func():
+		musHDL.SetMusic(\"sample_sinewave\", true)
+	)
+	bench(\"cue music\", func():
+		musHDL.CueMusic(\"sample_sinewave\", \"48000\")
+	)
+	bench(\"change bpm\", func():
+		musHDL.ChangeBpm(\"sample_sinewave\", 120, 60)
+	)
+	var fxsetter :FXWrapper
+	
+	bench(\"get music's fx handle\", func():
+		fxsetter = musHDL.getFXHandle(\"sample_sinewave\")
+	)
+	bench(\"check fx is on\", func():
+		fxsetter.CheckFXOn()
+	)
+	bench(\"turn on / off music's fx\", func():
+		fxsetter.FX_ON_OFF(EnumWrapper.PDJE_FX_LIST.FILTER, true)
+	)
+	var musArg : FXArgWrapper
+	
+	bench(\"get music's argsetter\", func():
+		musArg = fxsetter.GetArgSetter()
+	)
+	bench(\"get music's arg setter keys\", func():
+		musArg.GetFXArgKeys(EnumWrapper.PDJE_FX_LIST.FILTER)
+	)
+	bench(\"set music's fx\", func():
+		musArg.SetFXArg(EnumWrapper.PDJE_FX_LIST.FILTER, \"HLswitch\", 0)
+	)
+	bench(\"get loaded music list\", func():
+		musHDL.GetLoadedMusicList()
+	)
+	bench(\"unload music\", func():
+		musHDL.UnloadMusic(\"sample_sinewave\")
+	)
+	
+	bench(\"change player's cursor position\", func():
+		player.ChangeCursorPos(\"0\")
+	)
+	bench(\"get player's comsumed frames\", func():
+		player.GetConsumedFrames()
+	)
+	bench(\"get player status\", func():
+		player.GetStatus()
+	)
+	bench(\"deactive player\", func():
+		player.Deactivate()
+	)
+"
+
+[node name="Node" type="Node"]
+script = SubResource("GDScript_4rfxv")
