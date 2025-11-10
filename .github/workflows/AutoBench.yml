@@ -120,12 +120,48 @@ jobs:
           chmod +x "../$GODOT_NAME"
           "../$GODOT_NAME" --headless --path . --import --quit
           timeout 300s "../$GODOT_NAME" --headless --path . -v --run "res://AutoBench/Bench-Core.tscn"
-          ls
+          
           cat QC_Result.txt
       
-      - name: Upload build artifacts
+      - name: Upload Bench Result
+        if: success() 
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-${{ matrix.os }}
+          path: ./QC_Result.txt
+
+      - name: Upload failed artifacts
         if: failure() 
         uses: actions/upload-artifact@v4
         with:
-          name: failed
-          path: ./    
+          name: failed-${{ matrix.os }}
+          path: ./
+          
+  AfterStep :
+    name: after_step
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          pattern: 'bench*'
+          merge-multiple: true
+          path: ./benchResult
+      - name: List files
+        run: |
+          tree .
+          
+      - name: Ensure nightly release exists
+        run: |
+          if ! gh release view nightly >/dev/null 2>&1; then
+            gh release create nightly --generate-notes -t "PDJE Bench Result" -d=false
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Reveal Bench
+        run: gh release upload nightly benchResult/* --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
