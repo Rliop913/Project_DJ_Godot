@@ -80,7 +80,9 @@ jobs:
           rm ./*zip
           ls | grep "Godot"
           GODOT_NAME="Godot_mono.app/Contents/MacOS/Godot"
-          echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV" 
+          echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV"
+          brew install coreutils
+          alias timeout="gtimeout"
       
       - name: Set Project-Windows
         shell: pwsh
@@ -88,7 +90,7 @@ jobs:
         run: |
           git -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false clone https://github.com/Rliop913/Project_DJ_Godot.git
           cd Project_DJ_Godot
-          Update_Project_DJ_Godot.bat
+          ./Update_Project_DJ_Godot.bat
       - name: Set Project
         shell: bash
         if: runner.os != 'Windows'
