@@ -141,6 +141,7 @@ jobs:
     name: after_step
     runs-on: ubuntu-latest
     needs: BenchTest
+    if: ${{ always() }}
     permissions:
       contents: write
     steps:
@@ -150,9 +151,19 @@ jobs:
           pattern: 'bench*'
           merge-multiple: true
           path: ./benchResult
-      - name: List files
+      - name: detect files
+        id: detect
         run: |
           tree .
+          shopt -s nullglob
+          files=(benchResult/**/* benchResult/*)
+          if (( ${#files[@]} > 0 )); then
+            echo "has_files=true"  >> "$GITHUB_OUTPUT"
+            echo "count=${#files[@]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_files=false" >> "$GITHUB_OUTPUT"
+            echo "count=0"         >> "$GITHUB_OUTPUT"
+          fi
           
       - name: Ensure nightly release exists
         run: |
@@ -163,6 +174,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Reveal Bench
+        if: ${{ steps.detect.outputs.has_files == 'true' }}
         run: gh release upload nightly benchResult/* --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
