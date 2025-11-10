@@ -130,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bench-${{ matrix.os }}
-          path: $GITHUB_WORKSPACE/Project_DJ_Godot/QCRes
+          path: ${{ github.workspace }}/Project_DJ_Godot/QCRes
 
       - name: Upload failed artifacts
         if: failure() 
