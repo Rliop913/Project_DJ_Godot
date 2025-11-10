@@ -6,8 +6,20 @@ var eg:PDJE_Wrapper
 var startTime:int
 var endTime:int
 var ed:EditorWrapper
+var edit_music_args:PDJE_EDITOR_ARG
+var edit_mix_args:PDJE_EDITOR_ARG
+var graph:String
+var targetName :String
+var targetOID :String
+var track_data:Array
+var player:PlayerWrapper
+var mixFX : FXWrapper
+var mixArgSetter:FXArgWrapper
+var musHDL : MusPanelWrapper
+var fxsetter :FXWrapper
+var musArg : FXArgWrapper
 func gettime():
-	return Time.get_ticks_msec()
+	return Time.get_ticks_usec()
 
 func bench(func_name:String, work:Callable):
 	var fa := FileAccess.open(\"res://QC_Result.txt\", FileAccess.READ_WRITE)
@@ -19,13 +31,12 @@ func bench(func_name:String, work:Callable):
 	work.call()
 	endTime = gettime() - startTime
 	
-	var text = \"[bench func=\" + func_name + \" elapsed: \" + str(endTime) + \" ms ]\"
+	var text = \"[bench func=\" + func_name + \" elapsed: \" + str(endTime) + \" microsecond ]\"
 	fa.store_line(text)
 	fa.flush()
 	fa.close()
 	
 func _ready() -> void:
-	return
 	bench(\"init core engine object\", func():
 		eg = PDJE_Wrapper.new()
 		)
@@ -42,7 +53,7 @@ func _ready() -> void:
 	bench(\"config new music\",func():
 		ed.ConfigNewMusic(\"sample_sinewave\", \"composer\", \"res://sine_440.wav\", \"0\")
 	)
-	var edit_music_args:PDJE_EDITOR_ARG
+	
 	bench(\"init music arg\", func():
 		edit_music_args = PDJE_EDITOR_ARG.new()
 	)
@@ -52,7 +63,7 @@ func _ready() -> void:
 	bench(\"add music line\", func():
 		ed.AddLine(edit_music_args)
 	)
-	var edit_mix_args:PDJE_EDITOR_ARG
+	
 	edit_mix_args = PDJE_EDITOR_ARG.new()
 	bench(\"write track arg\", func():
 		edit_mix_args.InitMixArg(PDJE_EDITOR_ARG.EDITOR_TYPE_LIST.LOAD, 0, 1, 
@@ -63,13 +74,14 @@ func _ready() -> void:
 	bench(\"add track line\", func():
 		ed.AddLine(edit_mix_args)
 	)
-	edit_mix_args.InitMixArg(PDJE_EDITOR_ARG.EDITOR_TYPE_LIST.BPM_CONTROL,
+	var editMixBpm:= PDJE_EDITOR_ARG.new()
+	editMixBpm.InitMixArg(PDJE_EDITOR_ARG.EDITOR_TYPE_LIST.BPM_CONTROL,
 	PDJE_EDITOR_ARG.EDITOR_DETAIL_LIST.TIME_STRETCH,
 	1,
 	\"60\",\"\",\"\",
 	0,0,0,
 	0,0,0)
-	ed.AddLine(edit_mix_args)
+	ed.AddLine(editMixBpm)
 	var edit_kv_args := PDJE_EDITOR_ARG.new()
 	edit_kv_args.InitKeyValueArg(\"temp\", \"data\")
 	ed.AddLine(edit_kv_args)
@@ -88,14 +100,14 @@ func _ready() -> void:
 	bench(\"update log graph\", func():
 		ed.UpdateLog(ed.KV,\"\")
 	)
-	var graph:String
+	
 	bench(\"get log graph\", func():
-		graph = ed.GetLogWithJSONGraph(ed.kv, \"\")
+		graph = ed.GetLogWithJSONGraph(ed.KV, \"\")
 	)
 	var jobj := JSON.new()
 	var jsonparsed = jobj.parse_string(graph)
-	var targetName :String = jsonparsed[\"BRANCH\"][0][\"NAME\"] as String
-	var targetOID :String = jsonparsed[\"BRANCH\"][0][\"OID\"] as String
+	targetName = jsonparsed[\"BRANCH\"][0][\"NAME\"] as String
+	targetOID= jsonparsed[\"BRANCH\"][0][\"OID\"] as String
 	bench(\"go\", func():
 		ed.Go(ed.KV, targetName, targetOID)
 	)
@@ -108,9 +120,6 @@ func _ready() -> void:
 		ed.render(\"sample_track\")
 	)
 	
-	bench(\"make demo player\", func():
-		ed.demoPlayInit(48, \"sample_track\")
-	)
 	
 	bench(\"push only music to root db\", func():
 		ed.pushToRootDB(\"sample_sinewave\", \"composer\")
@@ -119,6 +128,10 @@ func _ready() -> void:
 	bench(\"push track to root db\", func():
 		ed.pushTrackToRootDB(\"sample_track\")
 	)
+	
+	#bench(\"make demo player\", func():
+		#ed.demoPlayInit(48, \"sample_track\")
+	#)deprecate for a while. caused error.
 	
 	bench(\"destroy sandbox\", func():
 		ed.DESTROY_PROJECT()
@@ -130,7 +143,7 @@ func _ready() -> void:
 	bench(\"Search Music\", func():
 		eg.SearchMusic(\"\", \"\", -1.0)
 	)
-	var track_data:Array
+	
 	bench(\"Search Track\", func():
 		track_data = eg.SearchTrack(\"\")
 	)
@@ -138,7 +151,7 @@ func _ready() -> void:
 		eg.InitPlayer(PDJE_Wrapper.HYBRID_RENDER, track_data[0], 48)
 	)
 	
-	var player:PlayerWrapper
+	
 	
 	bench(\"get player\", func():
 		player = eg.GetPlayer()
@@ -147,7 +160,7 @@ func _ready() -> void:
 	bench(\"activate player\", func():
 		player.Activate()
 	)
-	var mixFX : FXWrapper
+	
 	bench(\"get main fx\", func():
 		mixFX = player.GetFXControlPanel()
 	)
@@ -158,7 +171,7 @@ func _ready() -> void:
 	bench(\"on / off fx\", func():
 		mixFX.FX_ON_OFF(EnumWrapper.PDJE_FX_LIST.FILTER, true)
 	)
-	var mixArgSetter:FXArgWrapper
+	
 	bench(\"get main fx argsetter\", func():
 		mixArgSetter = mixFX.GetArgSetter()
 	)
@@ -168,7 +181,7 @@ func _ready() -> void:
 	bench(\"set main fx arg\", func():
 		mixArgSetter.SetFXArg(EnumWrapper.PDJE_FX_LIST.FILTER, \"HLswitch\", 0)
 	)
-	var musHDL : MusPanelWrapper
+	
 	
 	bench(\"get main music control pannel\", func():
 		musHDL = player.GetMusicControlPanel()
@@ -185,7 +198,7 @@ func _ready() -> void:
 	bench(\"change bpm\", func():
 		musHDL.ChangeBpm(\"sample_sinewave\", 120, 60)
 	)
-	var fxsetter :FXWrapper
+	
 	
 	bench(\"get music's fx handle\", func():
 		fxsetter = musHDL.getFXHandle(\"sample_sinewave\")
@@ -196,7 +209,7 @@ func _ready() -> void:
 	bench(\"turn on / off music's fx\", func():
 		fxsetter.FX_ON_OFF(EnumWrapper.PDJE_FX_LIST.FILTER, true)
 	)
-	var musArg : FXArgWrapper
+	
 	
 	bench(\"get music's argsetter\", func():
 		musArg = fxsetter.GetArgSetter()
