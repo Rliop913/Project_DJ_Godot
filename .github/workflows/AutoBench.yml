@@ -1,0 +1,125 @@
+name: auto_bench
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  SmokeTest:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+
+      matrix:
+        include:
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            build_type: Release
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Release
+          - os: macOS-14
+            c_compiler: clang
+            cpp_compiler: clang++
+            build_type: Release
+
+    steps:
+      - name: release-downloader-macos
+        uses: robinraju/release-downloader@v1.12
+        if: runner.os == 'macOS'
+        with:
+          repository: godotengine/godot
+          tag: 4.4.1-stable
+          fileName: Godot_v4.4.1-stable_mono_macos.universal.zip
+          out-file-path: .
+          extract: true
+      - name: release-downloader-Windows
+        uses: robinraju/release-downloader@v1.12
+        if: runner.os == 'Windows'
+        with:
+          repository: godotengine/godot
+          tag: 4.4.1-stable
+          fileName: Godot_v4.4.1-stable_win64.exe.zip
+          out-file-path: .
+          extract: true
+      - name: release-downloader-linux
+        uses: robinraju/release-downloader@v1.12
+        if: runner.os == 'Linux'
+        with:
+          repository: godotengine/godot
+          tag: 4.4.1-stable
+          fileName: Godot_v4.4.1-stable_linux.x86_64.zip
+          out-file-path: .
+          extract: true
+          
+      - name: Locate Downloaded-Linux
+        shell: bash
+        if: runner.os == 'Linux'
+        run: |
+          ls .
+          rm ./*.zip
+          GODOT_NAME=$(ls | grep Godot)
+           echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV" 
+      - name: Locate Downloaded-Windows
+        shell: bash
+        if: runner.os =='Windows'
+        run: |
+          ls .
+          rm ./*zip
+          GODOT_NAME=$(ls | grep console)
+          echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV"
+      - name: Locate Downloaded-Macos
+        shell: bash
+        if: runner.os == 'macOS'
+        run: |
+          ls .
+          rm ./*zip
+          ls | grep "Godot"
+          GODOT_NAME="Godot_mono.app/Contents/MacOS/Godot"
+          echo "GODOT_NAME=$GODOT_NAME" >> "$GITHUB_ENV"
+          brew install coreutils
+          alias timeout="gtimeout"
+      
+      - name: Set Project-Windows
+        shell: pwsh
+        if: runner.os == 'Windows'
+        run: |
+          git -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false clone https://github.com/Rliop913/Project_DJ_Godot.git
+          cd Project_DJ_Godot
+          ./Update_Project_DJ_Godot.bat
+      - name: Set Project
+        shell: bash
+        if: runner.os != 'Windows'
+        run: |
+          git -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false clone https://github.com/Rliop913/Project_DJ_Godot.git
+          cd Project_DJ_Godot
+          bash Update_Project_DJ_Godot.sh
+      - name: Run Test
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE/Project_DJ_Godot
+          cat > project.godot <<'GODOT'
+          ; Engine configuration file.
+          ; It's best edited using the editor UI and not directly,
+          ; since the parameters that go here are not all obvious.
+          ;
+          ; Format:
+          ;   [section] ; section goes between []
+          ;   param=value ; assign values to parameters
+          
+          config_version=5
+          
+          [application]
+          
+          config/features=PackedStringArray("4.4")
+          GODOT
+          chmod +x "../$GODOT_NAME"
+          "../$GODOT_NAME" --headless --path . --import --quit
+          timeout 300s "../$GODOT_NAME" --headless --quiet --path . --run "res://AutoBench/Bench-Core.tscn"
+          ls
+          cat QC_Result.txt
+          
