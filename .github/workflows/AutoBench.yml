@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
 jobs:
-  SmokeTest:
+  BenchTest:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -140,6 +140,7 @@ jobs:
   AfterStep :
     name: after_step
     runs-on: ubuntu-latest
+    needs: BenchTest
     permissions:
       contents: write
     steps:
