@@ -122,13 +122,15 @@ jobs:
           timeout 300s "../$GODOT_NAME" --headless --path . -v --run "res://AutoBench/Bench-Core.tscn"
           
           cat QC_Result.txt
+          mkdir QCRes
+          cp QC_Result.txt QCRes/
       
       - name: Upload Bench Result
         if: success() 
         uses: actions/upload-artifact@v4
         with:
           name: bench-${{ matrix.os }}
-          path: ./QC_Result.txt
+          path: ./QCRes
 
       - name: Upload failed artifacts
         if: failure() 
