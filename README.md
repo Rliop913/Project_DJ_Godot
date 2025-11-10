@@ -1,9 +1,5 @@
 # Project_DJ_Godot
 
-# 📢 PDJE LFS Server has stopped temporary
-
-The server is temporarily under maintenance due to a bot attack.
-
 ---
 
 # 📢 PDJE Input Module — Update Notice (v0.6.X)
