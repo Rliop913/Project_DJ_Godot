@@ -141,10 +141,15 @@ jobs:
     name: after_step
     runs-on: ubuntu-latest
     needs: BenchTest
+    
     if: ${{ always() }}
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with: 
+          lfs: false
+          fetch-depth: 1
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
@@ -156,7 +161,7 @@ jobs:
         run: |
           tree .
           shopt -s nullglob
-          files=(benchResult/**/* benchResult/*)
+          files=(benchResult/*)
           if (( ${#files[@]} > 0 )); then
             echo "has_files=true"  >> "$GITHUB_OUTPUT"
             echo "count=${#files[@]}" >> "$GITHUB_OUTPUT"
