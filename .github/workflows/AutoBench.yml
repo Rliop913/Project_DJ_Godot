@@ -119,7 +119,7 @@ jobs:
           GODOT
           chmod +x "../$GODOT_NAME"
           "../$GODOT_NAME" --headless --path . --import --quit
-          timeout 300s "../$GODOT_NAME" --headless --quiet --path . --run "res://AutoBench/Bench-Core.tscn"
+          timeout 300s "../$GODOT_NAME" --headless --path . -v --run "res://AutoBench/Bench-Core.tscn"
           ls
           cat QC_Result.txt
           
