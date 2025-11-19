@@ -106,10 +106,10 @@ func _ready() -> void:
 	)
 	var jobj := JSON.new()
 	var jsonparsed = jobj.parse_string(graph)
-	targetName = jsonparsed[\"BRANCH\"][0][\"NAME\"] as String
-	targetOID= jsonparsed[\"BRANCH\"][0][\"OID\"] as String
+	targetName = jsonparsed[\"LINE\"][0][\"TIME_STAMP\"] as String
+	targetOID= jsonparsed[\"LINE\"][0][\"OID\"] as String
 	bench(\"go\", func():
-		ed.Go(ed.KV, targetName, targetOID)
+		ed.Go(ed.KV, targetOID)
 	)
 	
 	bench(\"get all line\", func():
