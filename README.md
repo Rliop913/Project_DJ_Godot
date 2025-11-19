@@ -1,6 +1,12 @@
 # Project_DJ_Godot
 
 ---
+# 📢 Server has been temporary Blocked!!
+A temporary surge in excessive traffic has been detected on the PDJE LFS server.
+The server has been temporarily blocked for investigation into the current situation and will be reopened after corrective measures are implemented.
+
+
+---
 
 # 📢 PDJE Input Module — Update Notice (v0.6.X)
 
