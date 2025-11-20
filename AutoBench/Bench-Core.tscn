@@ -82,6 +82,14 @@ func _ready() -> void:
 	0,0,0,
 	0,0,0)
 	ed.AddLine(editMixBpm)
+	var editMixUnload:= PDJE_EDITOR_ARG.new()
+	editMixUnload.InitMixArg(PDJE_EDITOR_ARG.EDITOR_TYPE_LIST.UNLOAD,
+	PDJE_EDITOR_ARG.EDITOR_DETAIL_LIST.CUE,
+	1,
+	\"60\",\"\",\"\",
+	120,0,0,
+	0,0,0)
+	ed.AddLine(editMixUnload)
 	var edit_kv_args := PDJE_EDITOR_ARG.new()
 	edit_kv_args.InitKeyValueArg(\"temp\", \"data\")
 	ed.AddLine(edit_kv_args)
