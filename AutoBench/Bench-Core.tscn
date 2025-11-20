@@ -98,7 +98,7 @@ func _ready() -> void:
 		ed.deleteLine(edit_kv_args,false,false)
 	)
 	bench(\"update log graph\", func():
-		ed.UpdateLog(ed.KV,\"\")
+		ed.UpdateLog()
 	)
 	
 	bench(\"get log graph\", func():
@@ -129,9 +129,9 @@ func _ready() -> void:
 		ed.pushTrackToRootDB(\"sample_track\")
 	)
 	
-	#bench(\"make demo player\", func():
-		#ed.demoPlayInit(48, \"sample_track\")
-	#)deprecate for a while. caused error.
+	bench(\"make demo player\", func():
+		ed.demoPlayInit(48, \"sample_track\")
+	)
 	
 	bench(\"destroy sandbox\", func():
 		ed.DESTROY_PROJECT()
