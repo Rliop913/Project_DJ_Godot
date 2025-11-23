@@ -119,6 +119,10 @@ This repository receives and stores prebuilt artifacts from [PDJE_Godot_Plugin](
 
 - 📚 **Documentation**: [PDJE DOCS](https://rliop913.github.io/Project-DJ-Engine)
 
+- 🤖 **Codebase Assistant**: [AskToPDJE](https://github.com/Rliop913/AskToPDJE)
+
+- 💻 **Discord**: [Official Discord](https://discord.gg/2Pwju7xhmS)
+
 ---
 
 ## 🔁 CI/CD Call Graph
