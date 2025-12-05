@@ -2,6 +2,123 @@
 
 ---
 
+# Project DJ Godot — Update Notice (v0.7.X)
+
+## Documents & Sources
+
+- **[Official Documentation](https://rliop913.github.io/Project-DJ-Engine)**  
+  General usage, API details, and examples for PDJE and Project DJ Godot are provided via the project repository (`README`, Wiki, and `docs/`).  
+  Documentation for the **Judge module integration flow** and the **rhythm game template `.tscn` scene** will be added/updated alongside v0.7.X.
+
+- **[AskToPDJE](https://github.com/Rliop913/AskToPDJE) (Code/Docs Q&A Helper)**  
+  **AskToPDJE** is a RAG-based helper that answers questions about the PDJE / Project DJ Godot codebase and docs.  
+  It is designed to help with questions such as:
+  - “What does this node do?”
+  - “Where does this configuration come from?”
+  - “How do I extend the input/judge loop?”
+
+  For setup and usage, please refer to the **AskToPDJE repository `README`**.
+
+- **Community & Feedback ([Discord](https://discord.gg/2Pwju7xhmS) / GitHub Issues)**  
+  A dedicated **Project DJ Engine Discord server** is available for:
+  - Interface/API change proposals
+  - Usability feedback and improvement requests
+  - Questions about integrating PDJE / Project DJ Godot
+
+  For more structured feature requests and bug reports, please open a **GitHub Issue**.  
+  Feedback from Discord and GitHub Issues will be collected and prioritized together.
+
+---
+
+## Abstract
+
+Project DJ Godot v0.7.X **officially adds support for the PDJE Judge Module**.  
+With this update, you can connect **PDJE Core + Input + Judge** into a single flow inside a Godot scene, implementing the full loop:
+
+> Input → Judgement → Feedback
+
+primarily from Godot-side logic.
+
+The PDJE / Project DJ Godot project is actively evolving its **interface API** based on user feedback.  
+At the moment, **PDJE Input and Judge modules are supported on Windows first**.  
+Support for **Linux → macOS** will be added next for both the Input / Judge modules and the Project DJ Godot integration layer.
+
+> Note: The **PDJE Core module already supports Windows / Linux / macOS**.  
+> Currently, only the **Input / Judge modules are Windows-first**, and the Godot integration is following that rollout.
+
+A dedicated **Discord server** is available for interface/API feedback.  
+Please use **Discord channels** or **GitHub Issues** to propose interface changes or report usability issues; these will be reviewed and prioritized over time.
+
+---
+
+## What Can We Do (New with Judge Module Support)
+
+### Receive judgement results directly in Godot
+
+- The Judge module computes judgement results and sends them into Godot via signals.  
+- Example payload fields:
+  - Lane / note identifier (which lane/note was judged)
+  - Timing offset (early/late, offset value)
+
+This lets you keep the timing/judgement logic in PDJE while handling visual and gameplay feedback in Godot.
+
+---
+
+### Build a chart-driven judgement loop
+
+- The Judge module uses **chart data loaded into PDJE** to decide which note an input event should match.  
+- On the Godot side, you only need to care about:
+  - *When* a note was hit or missed
+  - *Which* note or lane it belonged to  
+
+This allows you to focus on effects, scoring, and combo logic rather than low-level matching.
+
+---
+
+### Separate feedback per lane / object
+
+- Each lane node (or dedicated Judge node) can subscribe only to the judgement signals relevant to it.  
+- This makes it easy to:
+  - Play different effects per lane
+  - Trigger lane-specific sounds or animations
+  - Apply lane-dependent camera or background reactions
+
+---
+
+### Apply per-device / per-key judgement rules and offsets
+
+- The Judge module interacts with the Core and Input modules, enabling:
+  - Different judgement rules or offsets **per device / per key**
+
+- Example usage:
+  - Apply a specific judgement offset only to a particular device+key pair
+  - Map multiple keyboards/controllers to separate lane groups and assign distinct judgement rules
+
+This is especially useful for multi-controller setups or arcade-style input devices.
+
+---
+
+### Timeline-synchronized judgement-driven effects
+
+- Judgement is computed in sync with the **PDJE timeline** (beat/frame-based).  
+- You can use this to implement rhythm-game–specific behavior such as:
+  - Triggering certain effects only on “on-time” hits
+  - Driving camera/background reactions on misses
+  - Aligning visual feedback with precise musical timing
+
+---
+
+### Rhythm-game starter template scene (`.tscn`)
+
+- v0.7.X ships with a **template `.tscn` scene** that includes a simple rhythm game flow with the Judge module wired in.
+- By duplicating and modifying this scene, you can quickly bootstrap a prototype that already has:
+  - Input → Judgement → Feedback wired end-to-end
+
+This template is intended as a starting point for building your own rhythm game on top of Project DJ Godot and PDJE.
+
+---
+
+
 ---
 
 # 📢 PDJE Input Module — Update Notice (v0.6.X)
@@ -30,37 +147,9 @@ Input data is wrapped through Godot Engine **Signals**, exposing **device GUID**
 
 > *Note:* Actual signal names/fields may vary by project configuration. Refer to the module’s API docs.
 
----
-
-## Architecture Overview (Collision-Avoidance Design)
-
-To avoid conflicts with Godot’s built-in input system, the Input Module spawns a **dedicated subprocess**.
-
-* Input buffers are shared via **IPC shared memory**, achieving **low overhead** and **stable latency**.
-* **Data path (Godot ⇄ subprocess):**
-
-  1. **Init phase:** exchange configuration over **localhost HTTP** (port, device list, etc.)
-  2. **Runtime phase:** deliver event stream via **IPC shared memory**
-
----
-
-## Initialization (Configure) Phase
-
-* The Godot process scans for an **available port** and passes it as an **argument** when launching the subprocess.
-* The subprocess listens on that port to accept the **HTTP configure** request, then exchanges **IPC details** (handles/keys/sizes, etc.).
-
-### Port Preemption (Race Condition) Notice
-
-* Rarely, a third-party process might claim the same port **during** subprocess startup.
-* If that happens, the subprocess cannot bind and **exits immediately**.
-* While **theoretical and very unlikely**, please **open an issue** with logs and reproduction steps if you suspect this occurred.
-
----
-
 ## Current Support / Version
 
-* **PDJE Version:** `0.6.X`
-* **Supported OS:** **Windows** (current)
+* **PDJE Version:** `0.7.X`
 * **Windows Backend:** **RawInput**
 * **Linux (planned):** `libevdev + epoll + RT scheduling`
 * **macOS (under review):** `IOKit (tentative)`
@@ -72,16 +161,6 @@ To avoid conflicts with Godot’s built-in input system, the Input Module spawns
 * **Port collisions:** Very rare during initialization; if repeated, report with logs.
 * **Security/AV tools:** Some environments may restrict RawInput or subprocess creation. Whitelisting/exceptions may be required.
 * **Timebase alignment:** For µs-level judgments, follow the documentation’s **timebase synchronization** strategy with your audio/judging engine.
-
----
-
-## Feedback & Contributions
-
-Bug reports, performance logs (timestamp/latency distributions), and device compatibility feedback are welcome.
-When filing an issue, please include: **OS/version**, **PDJE version (0.6.X)**, **Godot version**, **device model**, **repro steps**, and **relevant logs**.
-
-> If you’d like, we can append **Changelog**, **performance metrics**, and **migration guidance** sections tailored to this release.
-
 
 ---
 
