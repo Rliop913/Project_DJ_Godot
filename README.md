@@ -1,8 +1,17 @@
 # Project_DJ_Godot
 
+
+# Update Notice (v0.7.3)
+
+* Now PDJE Supports MIDI Input.
+
+
+* PDJE Input Configure API has slight change. [Check Here](https://rliop913.github.io/Project-DJ-Engine/Input_Engine.html)
+
+
 ---
 
-# Project DJ Godot — Update Notice (v0.7.X)
+# Update Notice (v0.7.X)
 
 ## Documents & Sources
 
