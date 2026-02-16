@@ -1,5 +1,17 @@
 # Project_DJ_Godot
 
+# Update Notice (v0.7.5)
+
+* The Core module now returns the delay from when buffers are calculated by the low-level audio APIs (WASAPI and ALSA, respectively) until they are actually transmitted.
+Consequently, the format of the Core Dataline has changed, and the delay has been reflected in the Judge logic.
+
+* The feeling that the timing was slightly off despite being correct was not an illusion; this issue has been resolved with this patch.
+
+Regarding v0.8.0: The Linux input module is now nearly complete.
+
+The remaining tasks are addressing access permissions and security considerations for the /dev directory due to evdev usage, and elevating the general thread to a real-time thread using rtkit.
+We should see 0.8.0 soon, and there will be changes to the milestones regarding Mac development. (We will likely postpone macOS support and move up the utility module development schedule.)
+
 
 # Update Notice (v0.7.3)
 
