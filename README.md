@@ -1,5 +1,29 @@
 # Project_DJ_Godot
 
+# Update Notice (v0.8.0)
+
+## Highlights
+- Official support for the Linux Input Module.
+- On Linux, input initialization now prioritizes the `evdev` path and falls back to `Wayland` when `evdev` is unavailable or constrained.
+- Added input backend inspection API (`GetCurrentInputBackend`) and option-based initialization API (`InitWithOptions`).
+- Improved Linux build/deployment pipeline (CI) dependencies and compatibility checks.
+
+## Changes (vs. v0.7.5)
+- Input Wrapper API expansion
+  - `InitWithOptions(use_internal_window=false)`
+  - `GetCurrentInputBackend()`
+- Added support for passing Godot native display/window handles in Wayland environments
+
+## Important Notice (Linux Input Backend)
+The main focus of v0.8.0 is official Linux input module support.
+
+During input initialization, the plugin prioritizes the `evdev` path and falls back to `Wayland` when `evdev` cannot be used due to environment constraints (permissions, accessibility, session conditions, etc.).
+
+However, in Linux environments that are **not** using a `systemd + Wayland` combination, there is a possibility that the fallback path (excluding `evdev`) may fail.
+
+That said, most gaming-oriented Linux distributions are highly likely to meet the `systemd + Wayland` baseline by default, so this is not expected to be a practical issue within the current distribution target scope.
+
+
 # Update Notice (v0.7.5)
 
 * The Core module now returns the delay from when buffers are calculated by the low-level audio APIs (WASAPI and ALSA, respectively) until they are actually transmitted.
