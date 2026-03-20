@@ -1,5 +1,47 @@
 # Project_DJ_Godot
 
+# Update Notice (v0.8.4)
+
+## Highlights
+- Utility Module Added
+- Plugin Stabilization
+- Minimum required Godot version: 4.4 -> 4.5
+
+
+## Changes (vs. v0.8.0)
+
+The minimum required version of Godot has been changed to 4.5.
+
+
+
+The Project DJ Engine Utility module has been added and integrated into the Godot plugin support pipeline. Additionally, some of the technical debt related to ABI and dependency linking has been alleviated.
+
+
+
+The Godot API for the Utility module is divided into Low-Level and High-Level interfaces; currently, only the Sound-to-Waveform feature has been implemented in the High-Level API on an experimental basis. (Music -> WebP)
+
+
+
+This feature is designed to allow Godot developers to easily visualize music registered within the PDJE Engine. Future versions may include audio analysis capabilities using STFT or other enhancements.
+
+
+
+In the Low-Level API, database-related APIs have been added, with access APIs implemented for SQLite (RDB), RocksDB (Key-Value DB), and Annoy (Vector DB).
+
+
+
+The parameters for the Util module’s APIs are not yet finalized and may change as we work to enhance usability and improve computational speed, API, and ABI stability.
+
+
+
+Additionally, a method has been added to the PDJE_Wrapper object that allows for the extraction of PCM data from music.
+
+
+
+Documentation for the Utility Module regarding this change is not yet available, but it will be updated soon.
+
+
+
 # Update Notice (v0.8.0)
 
 ## Highlights
