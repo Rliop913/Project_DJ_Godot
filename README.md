@@ -24,7 +24,7 @@ The PDJE_MIR (Music Information Retrieval) object has been added to the utility 
 The SoundToWebp function has also been moved here, and an STFT implementation along with a feature for mapping pitch ranges to RGB values using STFT have been added.
 
 
-The STFT implementation and pre- and post-processing within PDJE_MIR are mostly supported by the OpenCL backend; if it cannot be detected or used at runtime, the system automatically falls back to the CPU.
+The STFT implementation and pre- and post-processing (Hanning window as default) within PDJE_MIR are mostly supported by the OpenCL backend; if it cannot be detected or used at runtime, the system automatically falls back to the CPU.
 
 
 The STFT kernel was developed in-house and is not subject to any external licenses.
