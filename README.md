@@ -24,7 +24,7 @@ The PDJE_MIR (Music Information Retrieval) object has been added to the utility 
 The SoundToWebp function has also been moved here, and an STFT implementation along with a feature for mapping pitch ranges to RGB values using STFT have been added.
 
 
-The STFT implementation and pre- and post-processing (Hanning window as default) within PDJE_MIR are mostly supported by the OpenCL backend; if it cannot be detected or used at runtime, the system automatically falls back to the CPU.
+The STFT implementation and pre- and post-processing within PDJE_MIR are mostly supported by the OpenCL backend; if it cannot be detected or used at runtime, the system automatically falls back to the CPU.
 
 
 The STFT kernel was developed in-house and is not subject to any external licenses.
@@ -42,7 +42,7 @@ The following preprocessing and postprocessing operations can be applied to STFT
 
 **Postprocessing: toBinOnly, toPower, Mel Scale, toDB, normalize min-max (CPU only), toRGB (CPU only)**
 
-By default, the Pitch-RGB mapping function is configured to apply all of the listed preprocessing and postprocessing operations.
+By default, the Pitch-RGB mapping function is configured to apply all of the listed preprocessing(Hanning window as default) and postprocessing operations.
 
 Some preprocessing or postprocessing paths may be fused into a single GPGPU kernel to deliver better performance; in particular, nearly all postprocessing steps in the pitch-RGB mapping path are fused.
 
