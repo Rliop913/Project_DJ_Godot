@@ -16,7 +16,7 @@
 The low- and high-level API structures of the Utility module have been deprecated.
 
 
-It is now treated as a separate Godot object, which has simplified things. [See Documents here]()
+It is now treated as a separate Godot object, which has simplified things. [See Documents here](https://rliop913.github.io/Project-DJ-Engine/Util_Engine.html)
 
 The PDJE_MIR (Music Information Retrieval) object has been added to the utility module.
 
