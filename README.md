@@ -1,5 +1,53 @@
 # Project_DJ_Godot
 
+
+# Update Notice (v0.8.6)
+
+## Highlights
+- Utility Module API Changed
+- Implemented Runtime OpenCL Backend Detection
+- GPGPU Calculation & CPU Fallback Enabled
+- Clean-room Implementation of the STFT Algorithm on GPGPU
+
+
+
+## Changes (vs. v0.8.4)
+
+The low- and high-level API structures of the Utility module have been deprecated.
+
+
+It is now treated as a separate Godot object, which has simplified things. [See Documents here]()
+
+The PDJE_MIR (Music Information Retrieval) object has been added to the utility module.
+
+
+The SoundToWebp function has also been moved here, and an STFT implementation along with a feature for mapping pitch ranges to RGB values using STFT have been added.
+
+
+The STFT implementation and pre- and post-processing within PDJE_MIR are mostly supported by the OpenCL backend; if it cannot be detected or used at runtime, the system automatically falls back to the CPU.
+
+
+The STFT kernel was developed in-house and is not subject to any external licenses.
+
+
+The [source code](https://github.com/Rliop913/Project-DJ-Engine/tree/main/GenCodes/OKL) for the STFT kernel was taken from my [previous research](https://github.com/Rliop913/OCCAstft) and generates both GPGPU and CPU kernels simultaneously.
+
+
+The CPU kernel relies heavily on auto-vectorization for performance and may exhibit poor performance in Debug mode. To view actual Release performance, please change the [GDExtension's debug path](https://github.com/Rliop913/Project_DJ_Godot/blob/main/addons/Project_DJ_Godot/PDJE_Wrapper.gdextension) to Release and apply the changes.
+
+
+The following preprocessing and postprocessing operations can be applied to STFT:
+
+**Preprocessing: Overlap-Copy, DC Remove**
+
+**Postprocessing: toBinOnly, toPower, Mel Scale, toDB, normalize min-max (CPU only), toRGB (CPU only)**
+
+By default, the Pitch-RGB mapping function is configured to apply all of the listed preprocessing and postprocessing operations.
+
+Some preprocessing or postprocessing paths may be fused into a single GPGPU kernel to deliver better performance; in particular, nearly all postprocessing steps in the pitch-RGB mapping path are fused.
+
+The simple STFT GPU kernel also benefits from the fusion kernel and local memory optimization for windowEXP values ranging from 6 to 11 (fft sizes 64 to 2048).
+
 # Update Notice (v0.8.4)
 
 ## Highlights
