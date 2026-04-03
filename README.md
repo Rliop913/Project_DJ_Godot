@@ -38,7 +38,7 @@ The CPU kernel relies heavily on auto-vectorization for performance and may exhi
 
 The following preprocessing and postprocessing operations can be applied to STFT:
 
-**Preprocessing: Overlap-Copy, DC Remove**
+**Preprocessing: Overlap-Copy, DC Remove, Window(Hanning, Hamming, Nuttall, FlatTop, Gaussian, Blackman, Blackman Harris, Blackman Nuttall)**
 
 **Postprocessing: toBinOnly, toPower, Mel Scale, toDB, normalize min-max (CPU only), toRGB (CPU only)**
 
