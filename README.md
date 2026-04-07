@@ -1,5 +1,25 @@
 # Project_DJ_Godot
 
+# Update Notice (v0.8.7)
+
+## Highlights
+
+![over_channel_0_part_22](https://github.com/user-attachments/assets/deea8e05-2f33-4427-927d-455f2b7f9829)
+
+![over_channel_0_part_30](https://github.com/user-attachments/assets/b23a9160-1652-4112-bb49-34bea35e0c48)
+
+![over_channel_0_part_21](https://github.com/user-attachments/assets/9e89b443-e70a-4903-8258-fca2ad2a2285)
+
+- SoundToRGBWebp has been added
+- music to rgb api has been tuned
+
+## Changes (vs. v0.8.6)
+
+Sound to RGB Waveform api has been added.
+RGB Mapping Algorithm has been tuned.
+
+
+
 
 # Update Notice (v0.8.6)
 
