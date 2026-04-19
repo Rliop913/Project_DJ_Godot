@@ -36,7 +36,7 @@ RGB Mapping Algorithm has been tuned.
 The low- and high-level API structures of the Utility module have been deprecated.
 
 
-It is now treated as a separate Godot object, which has simplified things. [See Documents here](https://rliop913.github.io/Project-DJ-Engine/Util_Engine.html)
+It is now treated as a separate Godot object, which has simplified things. [See Documents here](https://rliop913.github.io/Project-DJ-Engine-Docs/Util_Engine.html)
 
 The PDJE_MIR (Music Information Retrieval) object has been added to the utility module.
 
@@ -155,7 +155,7 @@ We should see 0.8.0 soon, and there will be changes to the milestones regarding 
 * Now PDJE Supports MIDI Input.
 
 
-* PDJE Input Configure API has slight change. [Check Here](https://rliop913.github.io/Project-DJ-Engine/Input_Engine.html)
+* PDJE Input Configure API has slight change. [Check Here](https://rliop913.github.io/Project-DJ-Engine-Docs/Input_Engine.html)
 
 
 ---
