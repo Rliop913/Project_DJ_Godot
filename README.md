@@ -1,5 +1,34 @@
 # Project_DJ_Godot
-# Warning! 0.9.0 Emergency patch in progress
+
+
+# Update Notice (v0.9.0)
+
+## Highlights
+
+- ONNX Runtime (`PDJE_AI` backend)
+- `PDJE_AI` — embedded AI inference platform
+- “Beat This” beat-tracking model — [MODEL REPO](https://github.com/CPJKU/beat_this)
+
+## Changes (vs. v0.8.7)
+
+1. `GAME_TEMPLATE.tscn` has been updated to be compatible with the latest codebase.
+
+2. ONNX Runtime has been officially integrated into the `PDJE_UTIL` module and is available as `PDJE_AI`.  
+   `PDJE_AI` uses ONNX Runtime as its backend and currently runs in CPU-only mode.
+
+3. The “Beat This” beat-tracking AI model has been added to `PDJE_AI`.
+
+
+## Introducing Beat This
+
+“Beat This” is an AI-based beat-tracking model developed by Francesco Foscarin, Jan Schlüter, and Gerhard Widmer, and introduced in the ISMIR 2024 paper “Beat This! Accurate Beat Tracking Without DBN Postprocessing.”
+
+With permission from the main maintainer of Beat This, the model is provided by converting it into the ONNX format and redistributing it as an ONNX model.
+
+This model is designed to estimate beat and downbeat positions from audio. It analyzes input music and outputs timestamp sequences for detected **beats** and **downbeats**.
+
+The Beat This outputs integrated into `PDJE_AI` can be used as timing anchors for rhythm-aware processing, including **first beat position estimation**, music **BPM calculation**, **BPM change tracking within music**, beat-synchronized effects, and music analysis.
+
 
 
 # Update Notice (v0.8.7)
