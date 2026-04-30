@@ -1,4 +1,6 @@
 # Project_DJ_Godot
+# Warning! 0.9.0 Emergency patch in progress
+
 
 # Update Notice (v0.8.7)
 
