@@ -14,6 +14,16 @@ rails, or judge callbacks.
 Input and judge wrappers are build conditional. Verify
 `PDJE_GODOT_ENABLE_INPUT_WRAPPER` for the target platform.
 
+## API Source
+
+The judge startup contract, native status codes, and callback model are
+documented at
+https://rliop913.github.io/Project-DJ-Engine-Docs/Judge_Engine.html. The
+current Godot call signatures below follow `GAME_TEMPLATE.tscn` when the
+official Godot snippet has older argument shapes.
+Search `Startup Contract`, `Initialization API`, and `Godot Wrapper Flow` on
+the official page before deciding a judge setup call is undocumented.
+
 ## Required Order
 
 1. Initialize `PDJE_Wrapper`.
@@ -42,7 +52,7 @@ var player := core.GetPlayer()
 input.Init()
 var selected_devices := []
 for device in input.GetDevs():
-    if device["type"] == "KEYBOARD":
+    if device["type"] == "MOUSE":
         selected_devices.push_back(device)
 var selected_midi := input.GetMIDIDevs()
 input.Config(selected_devices, selected_midi)
@@ -51,7 +61,7 @@ if not judge.AddDataLines(input, core):
     return
 
 for device in selected_devices:
-    judge.DeviceAdd(device, InputLine.A, 0, 1)
+    judge.DeviceAdd(device, InputLine.PDJE_BTN_L, 0, 1)
 
 for midi_port in selected_midi:
     judge.MIDI_DeviceAdd(midi_port, 1, "NOTE_ON", 1, 48, 0)
@@ -75,12 +85,24 @@ input.Kill()
 judge.EndJudge()
 ```
 
+## `PDJE_Judge_Module` Reference
+
+| Method | Args | Returns | Failure / Empty value | Source |
+| --- | --- | --- | --- | --- |
+| `AddDataLines(input, core)` | `PDJE_Input_Module`, `PDJE_Wrapper`. | `bool` in current examples. | `false` if either module cannot provide a valid data line. | Official judge docs; Current examples. |
+| `DeviceAdd(device_dictionary, key_code, offset_microsecond, match_rail_id)` | One dictionary from `GetDevs()`, `InputLine.*` key/mouse constant, `int`, `int` rail id. | `bool` in current examples. | `false`; the standard rail mapping was not registered. | Current examples; official docs describe rail mapping concept. |
+| `MIDI_DeviceAdd(midi_device_name, match_rail_id, input_type, ch, pos, offset_microsecond)` | MIDI port `String`, rail id `int`, input type `String`, channel `int`, note/controller position `int`, offset `int`. | Not checked in current example; treat exact return as wrapper-version dependent. | Verify if using as a boolean guard; wrong port/type/channel means no matching rail. | Official judge docs; Current examples. |
+| `SetRule(use_range_half_us, miss_range_half_us, use_sleep_ms, miss_sleep_ms, enable_custom_mouse_signal)` | Two microsecond windows, two worker sleep values in ms, `bool`. | Not documented for Godot wrapper; observed as command-style setup. | Missing/empty event rule makes `StartJudge()` fail. | Official judge docs; Current examples. |
+| `SetNotes(core, track_title)` | `PDJE_Wrapper`, `String`. | `bool` in current examples. | `false`; note objects were not collected. | Official judge docs; Current examples. |
+| `StartJudge()` | None. | `bool` in Godot wrapper. Native `Start()` returns `JUDGE_STATUS`. | `false` and diagnostic error if core line, input line, event rule, rail mapping, or note objects are missing. | Official judge docs; Current examples. |
+| `EndJudge()` | None. | Native docs return `void`; Godot wrapper is command-style. | Stops event loop and releases cached init data. | Official judge docs; Current examples. |
+
 ## Rail Setup
 
 Standard device rail:
 
 ```gdscript
-judge.DeviceAdd(device_dictionary, InputLine.A, 0, 1)
+judge.DeviceAdd(mouse_device_dictionary, InputLine.PDJE_BTN_L, 0, 1)
 ```
 
 | Argument | Meaning |
@@ -89,6 +111,11 @@ judge.DeviceAdd(device_dictionary, InputLine.A, 0, 1)
 | `PDJE_KEY_CODE` | Bound key/mouse enum value from `InputLine`. |
 | `offset_microsecond` | Timing offset applied to this route. |
 | `MatchRail_id` | Logical gameplay rail id used by note rows. |
+
+Keyboard bindings use the same `DeviceAdd(...)` shape after selecting a
+keyboard device dictionary. Before using examples such as `InputLine.A`,
+`InputLine.S`, `InputLine.D`, or `InputLine.F`, verify those constants exist in
+the current wrapper build.
 
 MIDI rail:
 
@@ -154,4 +181,3 @@ missing:
 
 Do not start judge before `SetNotes()` and rail registration. Adding rails does
 not create note objects.
-

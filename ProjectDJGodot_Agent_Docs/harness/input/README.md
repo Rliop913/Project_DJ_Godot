@@ -20,6 +20,15 @@ Input wrappers are conditional:
 | `PDJE_Input_Module` | `Node` | Owns native `PDJE_Input`, discovers devices, configures selected standard/MIDI devices, runs and kills input capture. |
 | `InputLine` | `Node` | Receives a `PDJE_INPUT_DATA_LINE` and emits Godot signals. |
 
+## API Source
+
+The official input lifecycle and native return values are documented at
+https://rliop913.github.io/Project-DJ-Engine-Docs/Input_Engine.html. The
+Godot wrapper names come from that page's Godot example plus the current
+`GAME_TEMPLATE.tscn` and `PDJE_input_module_example.tscn`.
+Search `Selected methods`, `Current Lifecycle`, and `Godot Wrapper Example`
+on the official page before deciding an input wrapper method is absent.
+
 ## Lifecycle
 
 ```gdscript
@@ -58,18 +67,18 @@ module.
 
 ## `PDJE_Input_Module` Methods
 
-| Method | Use |
-| --- | --- |
-| `Init()` | Calls `InitWithOptions(false)`. |
-| `InitWithOptions(use_internal_window = false)` | Initializes native input; on Wayland it forwards Godot native display/window handles when available. |
-| `GetCurrentInputBackend()` | Returns backend string, such as `rawinput-ipc` on Windows or the current Linux backend. |
-| `GetDevs()` | Returns standard keyboard/mouse device dictionaries. |
-| `GetMIDIDevs()` | Returns MIDI port names. |
-| `Config(devices, MIDIdevices)` | Configures selected standard devices and matching MIDI ports. |
-| `InitializeInputLine(input_line)` | Injects the native data line into an `InputLine` node. |
-| `Run()` | Starts input capture. |
-| `Kill()` | Stops input capture. |
-| `GetState()` | Returns `DEVICE_CONFIG_STATE`, `INPUT_LOOP_READY`, `INPUT_LOOP_RUNNING`, or `DEAD`. |
+| Method | Args | Returns | Failure / Empty value | Source |
+| --- | --- | --- | --- | --- |
+| `Init()` | None. | `bool`; wrapper shortcut for `InitWithOptions(false)`. | `false`; do not call `GetDevs()`/`Config()` as a valid runtime. | Official input docs; Current examples. |
+| `InitWithOptions(use_internal_window = false)` | `bool`; Linux may use it for internal Wayland fallback, Windows ignores it. | `bool`. | `false`; native input did not initialize. | Official input docs. |
+| `GetCurrentInputBackend()` | None. | `String`, for example `rawinput-ipc` on Windows. | `"none"` until default devices/backend are initialized. | Official input docs. |
+| `GetDevs()` | None. | `Array[Dictionary]` for standard keyboard/mouse devices. | Empty `Array` when no standard devices are visible. | Official input docs; Current examples. |
+| `GetMIDIDevs()` | None. | `Array[String]` MIDI port names in the Godot wrapper. | Empty `Array` when no MIDI ports are visible. | Official input docs; Current examples. |
+| `Config(devices, MIDIdevices)` | `Array[Dictionary]` from `GetDevs()`, `Array[String]` from `GetMIDIDevs()`. | `bool`. | `false`; input loop is not ready. | Official input docs; Current examples. |
+| `InitializeInputLine(input_line)` | `InputLine` node. | Not documented for Godot wrapper; observed as command-style injection. | Later `emit_input_signal()` prints a failure and emits nothing if no data line was injected. | Official input docs; Current examples. |
+| `Run()` | None. | `bool`. | `false`; input loop did not start. | Official input docs; Current examples. |
+| `Kill()` | None. | `bool` in native docs; current examples call it command-style. | `false` if stop failed; reacquire data lines after teardown/rebuild. | Official input docs; Current examples. |
+| `GetState()` | None. | `int`/enum value: `DEVICE_CONFIG_STATE`, `INPUT_LOOP_READY`, `INPUT_LOOP_RUNNING`, or `DEAD`. | `DEAD` or default state after shutdown/failure. | Official input docs. |
 
 Device dictionaries from `GetDevs()` use:
 
@@ -79,15 +88,24 @@ Device dictionaries from `GetDevs()` use:
 | `name` | Device display name. |
 | `type` | `KEYBOARD` or `MOUSE`. |
 
+`GetMIDIDevs()` returns MIDI port names only. Pass the selected names back to
+`Config()`; do not pass device dictionaries for MIDI.
+
+## `InputLine` Methods
+
+| Method | Args | Returns | Failure / Empty value | Source |
+| --- | --- | --- | --- | --- |
+| `emit_input_signal()` | None. | `void`/command-style signal pump. | Emits nothing and prints a failure if `InitializeInputLine()` was not called with a valid data line. | Official input docs; Current harness. |
+
 ## Signals
 
 Connect these signals from `InputLine`:
 
-| Signal | Arguments |
-| --- | --- |
-| `pdje_input_keyboard_signal` | `device_id`, `device_name`, `microsecond_string`, `keyboard_key`, `isPressed` |
-| `pdje_input_mouse_signal` | `device_id`, `device_name`, `microsecond_string`, `L_btn`, `R_btn`, `wheel_btn`, `side_btn`, `ex_btn`, `is_wheel_YAxis`, `wheel_move`, `mouse_axis_type`, `x`, `y` |
-| `pdje_midi_input_signal` | `port_name`, `input_type`, `channel`, `position`, `value`, `microsecond_string` |
+| Signal | Arguments | Payload notes |
+| --- | --- | --- |
+| `pdje_input_keyboard_signal` | `device_id`, `device_name`, `microsecond_string`, `keyboard_key`, `isPressed` | Standard keyboard lane from the injected data line. |
+| `pdje_input_mouse_signal` | `device_id`, `device_name`, `microsecond_string`, `L_btn`, `R_btn`, `wheel_btn`, `side_btn`, `ex_btn`, `is_wheel_YAxis`, `wheel_move`, `mouse_axis_type`, `x`, `y` | Mouse button fields use `-1` for down, `1` for up, `0` for unchanged. |
+| `pdje_midi_input_signal` | `port_name`, `input_type`, `channel`, `position`, `value`, `microsecond_string` | MIDI lane is separate from the standard input arena but configured through the same module. |
 
 Mouse button fields use `-1` for down, `1` for up, and `0` for unchanged in the
 parsed event.
@@ -118,4 +136,3 @@ validate standard input.
   and emits nothing.
 - On Linux evdev paths, the user may need group access to `/dev/input/event*`;
   see the troubleshooting page.
-

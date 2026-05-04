@@ -20,6 +20,40 @@ relational DB, vector DB, MIR/STFT/waveform helpers, or Beat This AI detection.
 | `PDJE_BeatThisDetector` | Beat/downbeat detector handle. |
 | `PDJE_BeatThisResult` | Beat/downbeat timestamp arrays. |
 
+## API Source
+
+The maintained utility surface and Godot wrapper examples are documented at
+https://rliop913.github.io/Project-DJ-Engine-Docs/Util_Engine.html. Utility
+wrappers generally collapse native `Status` / `Result<T>` failures into Godot
+fallbacks such as `false`, empty arrays/strings, or `null` refs.
+Search `Godot DB wrapper examples`, `Godot MIR wrapper examples`, and
+`Godot Wrapper Surface` before deciding a utility wrapper call is absent.
+
+## DB Wrapper Reference
+
+| Class | Method | Args | Returns | Failure / Empty value | Source |
+| --- | --- | --- | --- | --- | --- |
+| `PDJE_KeyValueDB` | `Open(path, create_if_missing)` | Godot path `String`, `bool`. | `bool`. | `false`; do not call DB operations as valid. | Official util docs. |
+| `PDJE_KeyValueDB` | `PutText(key, value)` | `String`, `String`. | Not checked in official Godot example; native layer uses status-style failure. | Verify wrapper return before boolean guarding; failed writes print diagnostics. | Official util docs. |
+| `PDJE_KeyValueDB` | `GetText(key)` | `String`. | `String`. | Empty string can mean missing key or failure; avoid using it as the only existence signal. | Official util docs. |
+| `PDJE_KeyValueDB` | `Close()` | None. | Command-style in examples. | Handle should not be reused until reopened. | Official util docs. |
+| `PDJE_RelationalDB` | `Open(path, create_if_missing)` | Godot path `String`, `bool`. | `bool`. | `false`. | Official util docs. |
+| `PDJE_RelationalDB` | `Execute(sql, params = [])` | SQL `String`, optional `Array` bind params. | Not checked in official Godot example; native layer uses status/result objects. | Verify wrapper return/result object before relying on row changes. | Official util docs. |
+| `PDJE_RelationalDB` | `Query(sql, params = [])` | SQL `String`, optional `Array` bind params. | `Array[PDJE_RelationalRow]`. | Empty `Array` on no rows or failure; inspect diagnostics for failures. | Official util docs. |
+| `PDJE_RelationalDB` | `Close()` | None. | Command-style in examples. | Handle should not be reused until reopened. | Official util docs. |
+| `PDJE_VectorDB` | `Open(path, dimension, trees, read_only, create_if_missing)` | Godot path `String`, `int`, `int`, `bool`, `bool`. | `bool`. | `false`. | Official util docs. |
+| `PDJE_VectorDB` | `UpsertItem(item)` | `PDJE_VectorItem`. | Not checked in official Godot example; native layer uses status/result objects. | Verify wrapper return before relying on persistence. | Official util docs. |
+| `PDJE_VectorDB` | `Search(query_embedding, limit)` | `PackedFloat32Array`, `int`. | `Array[PDJE_VectorHit]`. | Empty `Array` on no hits or failure. | Official util docs. |
+| `PDJE_VectorDB` | `Close()` | None. | Command-style in examples. | Handle should not be reused until reopened. | Official util docs. |
+
+DB result carrier shapes used by the Godot examples:
+
+| Class | Properties | Notes |
+| --- | --- | --- |
+| `PDJE_RelationalRow` | `values` | Dictionary-like row values from `Query()`. |
+| `PDJE_VectorItem` | `id`, `embedding`, `text_payload` | Set these before `UpsertItem()`. |
+| `PDJE_VectorHit` | `id`, `distance` | Returned from `Search()`. |
+
 ## DB Examples
 
 Key-value:
@@ -62,6 +96,14 @@ if vectors.Open("user://pdje-cache/vectors", 3, 10, false, true):
 
 Use `user://` for mutable game caches. Use `res://` only for packaged
 read-only resources or project assets.
+
+## MIR And Waveform Reference
+
+| Class | Method | Args | Returns | Failure / Empty value | Source |
+| --- | --- | --- | --- | --- | --- |
+| `PDJE_MIR` | `STFT_PCM_DATA(pcm, channel_count, window, fft_order, hop_ratio, to_bin, to_power, mel_scale, to_db, normalize_min_max, to_rgb)` | `PackedFloat32Array`, `int`, `PDJE_MIR.*` window enum, numeric STFT options, post-process booleans. | `Array[PDJE_StftResult]`. | Empty `Array` on invalid input or processing failure. | Official util docs. |
+| `PDJE_MIR` | `SoundToWaveform(core_api, cache_db, music_title, composer, bpm, y_pixels, pcm_per_pixel, x_pixels_per_image)` | `PDJE_Wrapper`, optional/open `PDJE_KeyValueDB`, music metadata, image sizing ints. | `Array[PackedByteArray]` WebP byte chunks. | Empty `Array` if music lookup, decode, cache, or waveform generation fails. | Official util docs. |
+| `PDJE_StftResult` | `real`, `imag` | Properties, not methods. | Numeric arrays for each STFT frame. | Empty arrays for empty/failed frames. | Official util docs. |
 
 ## MIR And STFT
 
@@ -125,6 +167,16 @@ Godot AI classes:
 | `PDJE_BeatThisDetector` | Owns native `PDJE_UTIL::ai::BeatThisDetector`. |
 | `PDJE_BeatThisResult` | Has `beats` and `downbeats` `PackedFloat64Array` properties. |
 
+## Beat This API Reference
+
+| Class | Method / Property | Args | Returns | Failure / Empty value | Source |
+| --- | --- | --- | --- | --- | --- |
+| `PDJE_AI` | `CreateBeatThisDetector(model_path)` | Godot path `String` to an existing `.onnx` file. | `PDJE_BeatThisDetector` or `null`. | `null` plus diagnostics if the path is empty, missing, not a regular file, not `.onnx`, or cannot be converted. | Official util docs. |
+| `PDJE_BeatThisDetector` | `DetectPCM(pcm, channel_count, sample_rate)` | Interleaved `PackedFloat32Array`, `int`, `int`. | `PDJE_BeatThisResult` or `null`. | `null` for empty PCM, bad frame alignment, invalid channel count/sample rate, or inference failure. | Official util docs. |
+| `PDJE_BeatThisDetector` | `DetectMusic(core_api, music_title, composer, bpm)` | Initialized `PDJE_Wrapper`, `String`, `String`, `float`. | `PDJE_BeatThisResult` or `null`. | `null` if core is uninitialized, music search/PCM decode fails, or inference fails. | Official util docs. |
+| `PDJE_BeatThisResult` | `beats` | Property. | `PackedFloat64Array` beat timestamps in seconds. | Empty array when detector found none. | Official util docs. |
+| `PDJE_BeatThisResult` | `downbeats` | Property. | `PackedFloat64Array` downbeat timestamps in seconds. | Empty array when detector found none. | Official util docs. |
+
 The model path must be:
 
 - non-empty
@@ -133,8 +185,8 @@ The model path must be:
 - `.onnx`
 - reachable from Godot path conversion, such as `res://models/beat_this.onnx`
 
-For model path examples and ONNX usage, refer to the official documentation:
-https://rliop913.github.io/Project-DJ-Engine-Docs/
+For model path examples and ONNX usage, refer to the official Util documentation:
+https://rliop913.github.io/Project-DJ-Engine-Docs/Util_Engine.html
 
 For a game export, copy the model you use into the Godot project, for example
 `res://models/beat_this.onnx`, and include it in the export.
@@ -187,4 +239,3 @@ Beat This using the core decoder sample rate.
 
 Failures return null `PDJE_BeatThisResult` references and print method-level
 diagnostic errors.
-

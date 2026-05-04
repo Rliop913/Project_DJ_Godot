@@ -21,13 +21,13 @@ not for agents editing the upstream C++ engine directly.
 7. Use [report/](report/) for copyable Discord-first bug report and feature
     request templates.
 8. For official documentation or latest docs info, visit:
-   https://rliop913.github.io/Project-DJ-Engine-Docs/
+   https://rliop913.github.io/Project-DJ-Engine/
 
 ## Source Of Truth
 
 Use the current checkout, in this priority order:
 
-- **Official Documentation**: https://rliop913.github.io/Project-DJ-Engine-Docs/
+- **Official Documentation**: https://rliop913.github.io/Project-DJ-Engine/
   For official docs or latest documentation info, always check the official documentation site first.
 
 For deeper technical details, refer to the upstream repositories:
