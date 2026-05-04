@@ -64,8 +64,9 @@ if fx_panel != null:
     args.SetFXArg(EnumWrapper.ECHO, "EchoDryWet", 0.5)
 ```
 
-FX argument keys are case-sensitive. Use `GetFXArgKeys(fx)` or
-`srcs/FX_ARGS.rst`; do not rewrite key spelling.
+FX argument keys are case-sensitive. Do not rewrite key spelling.
+Refer to the official documentation for the complete FX argument reference:
+https://rliop913.github.io/Project-DJ-Engine-Docs/
 
 ## Editor Flow
 
@@ -208,8 +209,9 @@ Editor `details` enum values:
 
 ## Mix Args Table
 
-This table preserves the current author-facing mix argument contract from
-`docs_harness/important_assets/editor_format/tables.json`.
+This table preserves the current author-facing mix argument contract.
+Refer to the official documentation for the latest format:
+https://rliop913.github.io/Project-DJ-Engine-Docs/
 
 | type | ID | details | first | second | third | Interpolated Value |
 | --- | --- | --- | --- | --- | --- | --- |

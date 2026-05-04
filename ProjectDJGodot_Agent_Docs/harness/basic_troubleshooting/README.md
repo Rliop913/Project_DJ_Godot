@@ -151,10 +151,8 @@ Use OS tools when needed:
 
 - On macOS, input/judge wrappers may not be present.
 - On Linux, evdev may require user group access to `/dev/input/event*`.
-  The repository contains
-  `PDJE-Godot-Plugin/Project-DJ-Engine/scripts_for_distribution/evdev_group_apply.sh`
-  as a system-level helper. It changes user/group configuration and must be run
-  only by users who understand the privacy/security risk.
+  For Linux input setup scripts, refer to the upstream repository:
+  https://github.com/Rliop913/Project-DJ-Engine
 - `GetDevs()` is for standard keyboard/mouse devices; `GetMIDIDevs()` is for
   MIDI port names.
 - `Config()` must receive selected standard device dictionaries and selected

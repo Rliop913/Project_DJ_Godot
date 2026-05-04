@@ -29,19 +29,10 @@ Use the current checkout, in this priority order:
 
 - **Official Documentation**: https://rliop913.github.io/Project-DJ-Engine-Docs/
   For official docs or latest documentation info, always check the official documentation site first.
-- `PDJE-Godot-Plugin/Wrapper_Includes/` for Godot class names, bound methods,
-  signals, return shapes, and wrapper failure behavior.
-- `srcs/*.rst` for maintained user-facing explanations of PDJE modules.
-- `PDJE-Godot-Plugin/AGENT_DOCS/` for wrapper architecture and edit
-  boundaries.
-- `PDJE-Godot-Plugin/Project-DJ-Engine/AGENT_DOCS/` for upstream engine
-  behavior.
-- `docs_harness/important_assets/editor_format/tables.json` for the preserved
-  editor/mix argument tables.
 
-Generated API output under `docs/`, `srcs/api/`, and `srcs/xml/` is reference
-material. Do not treat generated pages as the only proof of an intended
-workflow.
+For deeper technical details, refer to the upstream repositories:
+- Core engine: https://github.com/Rliop913/Project-DJ-Engine
+- Godot wrapper: https://github.com/Rliop913/PDJE-Godot-Plugin
 
 ## Godot Entry Points
 

@@ -133,8 +133,9 @@ The model path must be:
 - `.onnx`
 - reachable from Godot path conversion, such as `res://models/beat_this.onnx`
 
-The checkout includes a native model asset at
-`PDJE-Godot-Plugin/Project-DJ-Engine/third_party/onnx_models/beat_this_model_final0.onnx`.
+For model path examples and ONNX usage, refer to the official documentation:
+https://rliop913.github.io/Project-DJ-Engine-Docs/
+
 For a game export, copy the model you use into the Godot project, for example
 `res://models/beat_this.onnx`, and include it in the export.
 

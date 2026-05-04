@@ -8,31 +8,18 @@ about API availability, packaging, platform support, or release state.
 
 1. Identify the module: core, input, judge, util, or packaging/debugging.
 2. Read the matching page in this directory.
-3. Verify Godot class and method names in `PDJE-Godot-Plugin/Wrapper_Includes/`.
-4. Verify deeper engine behavior in `srcs/*.rst` or upstream `AGENT_DOCS`.
+3. Use Godot class and method names as documented in the official wrapper references.
+4. Verify deeper engine behavior in the official documentation or upstream `AGENT_DOCS`.
 5. Use Godot-native values at boundaries: `String`, `Array`, `Dictionary`,
    `Packed*Array`, `RefCounted`, and `Node`.
 6. Report wrapper failures by checking return values and Godot console errors.
 
-## Stable Local References
+## Documentation References
 
-- Wrapper class registration:
-  `PDJE-Godot-Plugin/Wrapper_Includes/register_types.cpp`
-- GDExtension config:
-  `PDJE-Godot-Plugin/PDJE_Wrapper.gdextension`
-- Wrapper architecture:
-  `PDJE-Godot-Plugin/AGENT_DOCS/WRAPPING_STRATEGY.md`
-- Core manual:
-  `srcs/Core_Engine.rst`
-- Input manual:
-  `srcs/Input_Engine.rst`
-- Judge manual:
-  `srcs/Judge_Engine.rst`
-- Utility manual:
-  `srcs/Util_Engine.rst`
-- Editor format and mix args:
-  `srcs/Editor_Format.rst`,
-  `docs_harness/important_assets/editor_format/tables.json`
+For detailed documentation, refer to:
+- **Official Documentation**: https://rliop913.github.io/Project-DJ-Engine-Docs/
+- **Core Repository**: https://github.com/Rliop913/Project-DJ-Engine
+- **Wrapper Repository**: https://github.com/Rliop913/PDJE-Godot-Plugin
 
 ## Do Not Guess
 
