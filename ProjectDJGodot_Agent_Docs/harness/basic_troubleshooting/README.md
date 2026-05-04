@@ -31,6 +31,80 @@ The current CI prebuilt publishing workflow stages native files into:
 Do not claim a release package is current without checking the external
 prebuilt repository.
 
+## Initial Installation: LFS Pointers and Compressed Archives
+
+When installing the project for the first time, the `addons/Project_DJ_Godot/` directory may contain only Git LFS pointer files or `.7z.001` compressed archives instead of actual library binaries.
+
+Check if you have this problem:
+
+```bash
+# Check for LFS pointer files (small text files pretending to be binaries)
+# Linux
+file addons/Project_DJ_Godot/linux/release/*.so
+# If you see "ASCII text" instead of "ELF", they are LFS pointers
+
+# Windows
+file addons/Project_DJ_Godot/win/release/*.dll
+# If you see "ASCII text" instead of "PE32+", they are LFS pointers
+
+# macOS
+file addons/Project_DJ_Godot/macos/release/*.dylib
+# If you see "ASCII text" instead of "Mach-O", they are LFS pointers
+
+# Check for compressed .7z.001 files (all platforms)
+find addons/Project_DJ_Godot -name "*.7z.001" | head -5
+# If you see .7z.001 files, they need extraction
+```
+
+Solution: Run the Update script from your project root:
+
+```bash
+# For Linux/macOS
+bash ./Update_Project_DJ_Godot.sh
+
+# For Windows
+Update_Project_DJ_Godot.bat
+```
+
+What the Update script does:
+1. Installs `git`, `git-lfs`, and `p7zip` if missing
+2. Runs `git lfs install` and `git lfs pull` to fetch actual binaries
+3. Finds all `*.7z.001` files and extracts them with `7z e`
+4. Removes the compressed archives after extraction
+5. Copies the addon to the correct location in your project
+6. Cleans up the cloned temporary repository
+
+Verify fix:
+
+```bash
+# You should now see actual binary files, not .7z.001 or LFS pointers
+
+# Linux - check for real ELF binaries
+ls -lh addons/Project_DJ_Godot/linux/release/libPDJE_godot_wrapper.so
+file addons/Project_DJ_Godot/linux/release/libPDJE_godot_wrapper.so
+# Expected: "ELF 64-bit LSB shared object" + file size > 1MB
+
+# Windows - check for real PE binaries
+ls -lh addons/Project_DJ_Godot/win/release/PDJE_godot_wrapper.dll
+file addons/Project_DJ_Godot/win/release/PDJE_godot_wrapper.dll
+# Expected: "PE32+ executable" + file size > 1MB
+
+# macOS - check for real Mach-O binaries
+ls -lh addons/Project_DJ_Godot/macos/release/libPDJE_godot_wrapper.dylib
+file addons/Project_DJ_Godot/macos/release/libPDJE_godot_wrapper.dylib
+# Expected: "Mach-O 64-bit dynamically linked shared library" + file size > 1MB
+
+# No .7z.001 files should remain
+find addons/Project_DJ_Godot -name "*.7z.001" 2>/dev/null
+# Expected: no output (files were extracted and removed)
+```
+
+If the Update script fails:
+- Ensure you have Git and Git LFS properly configured
+- Check that `7z` (p7zip) is installed
+- Verify the repository was cloned with `git lfs clone` or ran `git lfs pull`
+- Check that you have write permissions to the `addons/` directory
+
 ## GDExtension Load Failures
 
 Check:
