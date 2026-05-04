@@ -19,12 +19,16 @@ not for agents editing the upstream C++ engine directly.
    [harness/basic_troubleshooting/README.md](harness/basic_troubleshooting/README.md)
    before packaging, debugging runtime load failures, or reporting bugs.
 7. Use [report/](report/) for copyable Discord-first bug report and feature
-   request templates.
+    request templates.
+8. For official documentation or latest docs info, visit:
+   https://rliop913.github.io/Project-DJ-Engine-Docs/
 
 ## Source Of Truth
 
 Use the current checkout, in this priority order:
 
+- **Official Documentation**: https://rliop913.github.io/Project-DJ-Engine-Docs/
+  For official docs or latest documentation info, always check the official documentation site first.
 - `PDJE-Godot-Plugin/Wrapper_Includes/` for Godot class names, bound methods,
   signals, return shapes, and wrapper failure behavior.
 - `srcs/*.rst` for maintained user-facing explanations of PDJE modules.
@@ -68,6 +72,80 @@ The current prebuilt publishing workflow stages runtime libraries into:
 - `addons/Project_DJ_Godot/macos/release` and `macos/debug`
 
 See the troubleshooting page before packaging.
+
+## Repository Chain and Update Checking
+
+Project DJ Godot is the **prebuilt plugin package** (프리빌트 저장소) that receives compiled artifacts from the development chain:
+
+```
+Project-DJ-Engine (Core) → PDJE-Godot-Plugin (Wrapper) → Project_DJ_Godot (Prebuilt)
+```
+
+### Repository Roles
+
+| Repository | URL | Role | Visibility |
+| --- | --- | --- | --- |
+| **Project-DJ-Engine** | https://github.com/Rliop913/Project-DJ-Engine | Core C++ engine, PDJE_UTIL, PDJE_INPUT, PDJE_JUDGE modules | Private |
+| **PDJE-Godot-Plugin** | https://github.com/Rliop913/PDJE-Godot-Plugin | Godot GDExtension wrapper, binds core to Godot API | Private |
+| **Project_DJ_Godot** | https://github.com/Rliop913/Project_DJ_Godot | Prebuilt plugin package with compiled libraries | Private (프리빌트) |
+
+### Check Current Version
+
+The prebuilt repository stores version files at the root:
+
+```bash
+# Check current versions in your local checkout
+cat PDJE_VERSION        # e.g., "0.9.0"
+cat PDJE_WRAPPER_VERSION  # e.g., "0.9.0"
+
+# Compare with the latest in the repository
+git fetch origin
+git show origin/main:PDJE_VERSION
+git show origin/main:PDJE_WRAPPER_VERSION
+```
+
+### Check for Updates
+
+Run the Update script to fetch the latest prebuilt artifacts:
+
+```bash
+# Linux/macOS
+bash ./Update_Project_DJ_Godot.sh
+
+# Windows
+Update_Project_DJ_Godot.bat
+```
+
+The script will:
+1. Clone the latest `Project_DJ_Godot` from GitHub
+2. Run `git lfs pull` to fetch actual binaries (not LFS pointers)
+3. Extract any `.7z.001` compressed archives
+4. Copy updated `addons/Project_DJ_Godot/` to your project
+5. Update `PDJE_VERSION` and `PDJE_WRAPPER_VERSION` files
+
+### Check Propagation Status
+
+To see how far core/plugin changes have propagated to the prebuilt:
+
+```bash
+# Check the latest commit messages in prebuilt repo
+git log --oneline -10
+
+# Check if a specific feature/fix is included
+git log --oneline --grep="feature-name-or-bug-id"
+
+# Verify the prebuilt CI status
+# Visit: https://github.com/Rliop913/Project_DJ_Godot/actions
+```
+
+The CI/CD pipeline chains are:
+- Core changes → triggers wrapper build → triggers prebuilt update
+- Check the GitHub Actions tab of each repository to see build status
+- Delays of a few hours may occur between core → wrapper → prebuilt propagation
+
+If the prebuilt doesn't have the latest core/plugin changes yet:
+- Wait for the CI/CD chain to complete (check GitHub Actions)
+- Or build from source: clone `Project-DJ-Engine` and `PDJE-Godot-Plugin`, then follow their build instructions
 
 ## Bug Contact Policy
 
