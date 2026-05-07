@@ -134,6 +134,18 @@ if exist PDJE_VERSION copy /Y "PDJE_VERSION" "..\"
 if exist PDJE_WRAPPER_VERSION copy /Y "PDJE_WRAPPER_VERSION" "..\"
 if exist Message_From_Project_DJ_Godot_Dev.md copy /Y "Message_From_Project_DJ_Godot_Dev.md" "..\"
 
+REM ===== 10-1) agent docs copy =====
+if exist "ProjectDJGodot_Agent_Docs\" (
+  if not exist "..\ProjectDJGodot_Agent_Docs" mkdir "..\ProjectDJGodot_Agent_Docs"
+  robocopy "ProjectDJGodot_Agent_Docs" "..\ProjectDJGodot_Agent_Docs" /MIR >nul
+  if errorlevel 8 (
+    echo ProjectDJGodot_Agent_Docs copy failed.
+    exit /b 1
+  )
+) else (
+  echo ProjectDJGodot_Agent_Docs directory not found. skipping docs copy.
+)
+
 
 
 popd

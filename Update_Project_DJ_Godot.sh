@@ -102,6 +102,13 @@ cp -r addons/Project_DJ_Godot/. ../addons/Project_DJ_Godot
 [ -f PDJE_WRAPPER_VERSION ] && cp PDJE_WRAPPER_VERSION ../
 [ -f Message_From_Project_DJ_Godot_Dev.md ] && cp Message_From_Project_DJ_Godot_Dev.md ../
 
+if [ -d ProjectDJGodot_Agent_Docs ]; then
+  rm -rf ../ProjectDJGodot_Agent_Docs
+  cp -r ProjectDJGodot_Agent_Docs ../
+else
+  echo "ProjectDJGodot_Agent_Docs directory not found. skipping docs copy."
+fi
+
 cd ..
 echo "installed! cleaning cloned repo now."
 sudo rm -r Project_DJ_Godot
