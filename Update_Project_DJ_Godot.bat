@@ -8,7 +8,7 @@ if errorlevel 1 (
   where winget >nul 2>&1 && (winget install -e --id Git.Git --source winget) ^
   || ( where choco >nul 2>&1 && (choco install git -y) ) ^
   || ( where scoop >nul 2>&1 && (scoop install git) ) ^
-  || ( echo No supported package manager found. Please install Git for Windows manually. & exit /b 1 )
+  || ( echo No supported package manager found. Please install Git for Windows manually. & goto :error_exit )
 )
 
 REM ===== 2) Git LFS install check =====
@@ -18,7 +18,7 @@ if errorlevel 1 (
   where winget >nul 2>&1 && (winget install -e --id GitHub.GitLFS --source winget) ^
   || ( where choco >nul 2>&1 && (choco install git-lfs -y) ) ^
   || ( where scoop >nul 2>&1 && (scoop install git-lfs) ) ^
-  || ( echo No supported package manager found. Please install Git LFS manually. & exit /b 1 )
+  || ( echo No supported package manager found. Please install Git LFS manually. & goto :error_exit )
 )
 
 REM ===== 3) 7zip install check =====
@@ -43,7 +43,7 @@ if not defined SEVENZIP (
   if not defined PM where scoop >nul 2>&1 && set "PM=scoop"
   if not defined PM (
     echo No supported package manager found. Please install 7-Zip manually.
-    exit /b 1
+    goto :error_exit
   )
 
   if "%PM%"=="winget" winget install -e --id 7zip.7zip --accept-package-agreements --accept-source-agreements
@@ -61,7 +61,7 @@ if not defined SEVENZIP (
 
 if not defined SEVENZIP (
   echo 7-Zip still not found. Aborting.
-  exit /b 1
+  goto :error_exit
 )
 
 REM ===== 4) fix git PATH issue =====
@@ -72,7 +72,7 @@ where git >nul 2>&1 || (
 )
 "%GIT_EXE%" --version >nul 2>&1 || (
   echo Git is installed but not available in this session. Please open a new terminal and run again.
-  exit /b 1
+  goto :error_exit
 )
 
 @REM REM ===== 5) 7z PATH fix =====
@@ -84,7 +84,7 @@ where git >nul 2>&1 || (
 @REM )
 @REM "%SEVENZIP%" >nul 2>&1 || (
 @REM   echo 7-Zip is installed but not available in this session. Please open a new terminal and run again.
-@REM   exit /b 1
+@REM   goto :error_exit
 @REM )
 
 REM ===== 6) Git LFS init =====
@@ -94,7 +94,7 @@ REM ===== 7) repo clone & LFS Pull =====
 "%GIT_EXE%" clone --depth=1 https://github.com/Rliop913/Project_DJ_Godot.git
 if errorlevel 1 (
   echo git clone failed.
-  exit /b 1
+  goto :error_exit
 )
 
 
@@ -140,7 +140,7 @@ if exist "ProjectDJGodot_Agent_Docs\" (
   robocopy "ProjectDJGodot_Agent_Docs" "..\ProjectDJGodot_Agent_Docs" /MIR >nul
   if errorlevel 8 (
     echo ProjectDJGodot_Agent_Docs copy failed.
-    exit /b 1
+    goto :error_exit
   )
 ) else (
   echo ProjectDJGodot_Agent_Docs directory not found. skipping docs copy.
@@ -166,3 +166,16 @@ endlocal
 
 if exist Update_Project_DJ_Godot.bat copy /Y "Update_Project_DJ_Godot.bat" "..\"
 if exist Update_Project_DJ_Godot.sh copy /Y "Update_Project_DJ_Godot.sh" "..\"
+
+call :wait_before_exit
+exit /b 0
+
+:error_exit
+call :wait_before_exit
+endlocal
+exit /b 1
+
+:wait_before_exit
+echo.
+pause
+exit /b 0
