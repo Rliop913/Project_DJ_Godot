@@ -23,40 +23,17 @@ if errorlevel 1 (
 
 REM ===== 3) 7zip install check =====
 set "SEVENZIP="
-
-REM find path
-where 7z >nul 2>&1 && set "SEVENZIP=7z"
-
-
-if not defined SEVENZIP for %%P in (
-  "%ProgramFiles%\7-Zip\7z.exe"
-  "%ProgramFiles(x86)%\7-Zip\7z.exe"
-  "%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
-) do if exist "%%~fP" set "SEVENZIP=%%~fP"
+call :find_7zip
 
 REM install
 if not defined SEVENZIP (
   echo 7-Zip not found. installing 7-Zip...
-  set "PM="
-  where winget >nul 2>&1 && set "PM=winget"
-  if not defined PM where choco >nul 2>&1 && set "PM=choco"
-  if not defined PM where scoop >nul 2>&1 && set "PM=scoop"
-  if not defined PM (
-    echo No supported package manager found. Please install 7-Zip manually.
+  call :install_7zip
+  if errorlevel 1 (
+    echo 7-Zip install failed. Please install 7-Zip manually.
     goto :error_exit
   )
-
-  if "%PM%"=="winget" winget install -e --id 7zip.7zip --accept-package-agreements --accept-source-agreements
-  if "%PM%"=="choco"  choco install 7zip -y
-  if "%PM%"=="scoop"  scoop install 7zip
-
-  REM research
-  where 7z >nul 2>&1 && set "SEVENZIP=7z"
-  if not defined SEVENZIP for %%P in (
-    "%ProgramFiles%\7-Zip\7z.exe"
-    "%ProgramFiles(x86)%\7-Zip\7z.exe"
-    "%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
-  ) do if exist "%%~fP" set "SEVENZIP=%%~fP"
+  call :find_7zip
 )
 
 if not defined SEVENZIP (
@@ -169,6 +146,37 @@ if exist Update_Project_DJ_Godot.sh copy /Y "Update_Project_DJ_Godot.sh" "..\"
 
 call :wait_before_exit
 exit /b 0
+
+:find_7zip
+set "SEVENZIP="
+where 7z >nul 2>&1 && set "SEVENZIP=7z"
+if not defined SEVENZIP for %%P in (
+  "%ProgramFiles%\7-Zip\7z.exe"
+  "%ProgramFiles(x86)%\7-Zip\7z.exe"
+  "%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
+) do if exist "%%~fP" set "SEVENZIP=%%~fP"
+exit /b 0
+
+:install_7zip
+where winget >nul 2>&1
+if not errorlevel 1 (
+  winget install -e --id 7zip.7zip --accept-package-agreements --accept-source-agreements
+  if not errorlevel 1 exit /b 0
+)
+
+where choco >nul 2>&1
+if not errorlevel 1 (
+  choco install 7zip -y
+  if not errorlevel 1 exit /b 0
+)
+
+where scoop >nul 2>&1
+if not errorlevel 1 (
+  scoop install 7zip
+  if not errorlevel 1 exit /b 0
+)
+
+exit /b 1
 
 :error_exit
 call :wait_before_exit
