@@ -1,4 +1,10 @@
 # Project_DJ_Godot
+# Update Notice (v0.9.3)
+
+## Changes (vs. v0.9.0)
+
+- Added string data fuzzy search Feature under util module. This feature will make it easy to implement fuzzy search for song titles.
+- Patched bug - The issue where the Editor Module always returned “false” when editing the “First beat” field, even when the edit was successful, has been fixed.
 
 
 # Update Notice (v0.9.0)
